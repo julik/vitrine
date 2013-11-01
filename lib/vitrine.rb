@@ -1,5 +1,6 @@
-require 'bundler'
-Bundler.require
+require 'sinatra/base'
+require 'coffee-script'
+require 'sass'
 
 require_relative 'version'
 
