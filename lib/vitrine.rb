@@ -9,12 +9,12 @@ module Vitrine
   
   def self.check_dirs_present!
     views = DEFAULTS[:root] + '/views'
-    unless File.exist?(views) and File.dir?(views)
+    unless File.exist?(views) and File.directory?(views)
       $stderr.puts "WARNING: `views' directory not found under the current tree, you might want to create it"
     end
     
     public = DEFAULTS[:root] + '/public'
-    unless File.exist?(views) and File.dir?(views)
+    unless File.exist?(views) and File.directory?(views)
       $stderr.puts "ERROR: `public' directory not found under the current tree, you might want to create it"
       exit 1
     end
