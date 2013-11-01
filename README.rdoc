@@ -18,6 +18,7 @@ console. If you have CSS errors that prevent the SASS stylesheets from compiling
 in front of your body element.
 
 Vitrine will not do any minification, packaging or baking at this point - it's meant to be like a display case.
+If you have a file called 'layout.erb' (or any other extension) it is going to be used as layout, but you can also do without it.
 
 == Contributing to vitrine
  
