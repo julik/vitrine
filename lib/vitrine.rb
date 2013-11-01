@@ -108,7 +108,13 @@ class Vitrine::App < Sinatra::Base
     
     # Auto-pick the template engine out of the extension
     template_engine = File.extname(template_path).gsub(/^\./, '')
-    render(template_engine, File.read(template_path), :layout => :layout)
+    
+    render(template_engine, File.read(template_path), :layout => get_layout)
+  end
+  
+  def get_layout
+    layouts = Dir.glob(File.join(settings.views, 'layout.*'))
+    layouts.any? ? :layout : false
   end
   
   # Try to find SCSS replacement for missing CSS
