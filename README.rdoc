@@ -1,6 +1,23 @@
 = vitrine
 
-Description goes here.
+Is a very small, simple web server one-liner for modern web-apps, a bit in the style of
+lineman, serve and such. Does three things:
+
+* Assumes two directories exist in the tree you are using - "views" and "public"
+* Takes a single line ('vitrine') and starts on the default port (4000)
+* Converts .coffee to .js on the fly using ExecJS. Link to your .coffee files as if they were .js
+   "script.js" will automatically pick up "script.coffee", compile it and serve it to the browser
+* Converts .scss to .css on the fly using Sass. Link to your .scss files as if they were .css
+   "styles.css" will automatically pick up "styles.scss", compile it and serve it to the browser
+
+CoffeeScript and SASS will be served right from your "public" directory, if there are no stylesheets
+with the same names. Templates from "views" will be used for pages that do not exist in HTML form.
+
+If you have errors in your CoffeeScript that prevent it from compiling you will get an error in your browser
+console. If you have CSS errors that prevent the SASS stylesheets from compiling you will get an error message
+in front of your body element.
+
+Vitrine will not do any minification, packaging or baking at this point - it's meant to be like a display case.
 
 == Contributing to vitrine
  

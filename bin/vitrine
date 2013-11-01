@@ -1,0 +1,5 @@
+#!/usr/bin/env ruby
+
+lib = File.dirname(__FILE__) + '/../lib'
+require lib + '/vitrine'
+Vitrine.run
