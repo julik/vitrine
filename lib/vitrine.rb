@@ -89,8 +89,13 @@ class Vitrine::App < Sinatra::Base
     specific_view = extensionless_path + ".*"
     view_index = extensionless_path + "/index.*"
     
+    # Catch-all template for HTML5 apps using pushState
+    catch_all = "/catch_all.*"
+    
+    possible_globs = [specific_view, view_index, catch_all]
+    
     # Glob for all the possibilites
-    possibilites = [specific_view, view_index].map do | pattern |
+    possibilites = possible_globs.map do | pattern |
       Dir.glob(File.join(settings.views, pattern))
     end.flatten.reject do | e |
       e =~ /\.DS_Store/ # except DS_Store
@@ -103,12 +108,14 @@ class Vitrine::App < Sinatra::Base
     
     # If nothing is found just bail
     unless template_path
-      raise "No template for either #{specific_view.inspect} or #{view_index.inspect}"
+      err = possible_globs.map{|e| e.inspect }.join(', ')
+      raise "No template found - tried #{er}"
     end
+    
+    $stderr.puts "Rendering via template #{template_path.inspect}"
     
     # Auto-pick the template engine out of the extension
     template_engine = File.extname(template_path).gsub(/^\./, '')
-    
     render(template_engine, File.read(template_path), :layout => get_layout)
   end
   
