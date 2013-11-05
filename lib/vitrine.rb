@@ -109,14 +109,15 @@ class Vitrine::App < Sinatra::Base
     # If nothing is found just bail
     unless template_path
       err = possible_globs.map{|e| e.inspect }.join(', ')
-      raise "No template found - tried #{er}"
+      raise "No template found - tried #{err}"
     end
     
     $stderr.puts "Rendering via template #{template_path.inspect}"
     
+    locals = {}
     # Auto-pick the template engine out of the extension
     template_engine = File.extname(template_path).gsub(/^\./, '')
-    render(template_engine, File.read(template_path), :layout => get_layout)
+    render(template_engine, File.read(template_path), :layout => get_layout, :locals => locals)
   end
   
   def get_layout
