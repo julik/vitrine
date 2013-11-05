@@ -1,24 +1,41 @@
 = vitrine
 
 Is a very small, simple web server one-liner for modern web-apps, a bit in the style of
-lineman, serve and such. Does three things:
+lineman, serve and such. 
 
-* Assumes two directories exist in the tree you are using - "views" and "public"
-* Takes a single line ('vitrine') and starts on the default port (4000)
-* Converts .coffee to .js on the fly using ExecJS. Link to your .coffee files as if they were .js
-   "script.js" will automatically pick up "script.coffee", compile it and serve it to the browser
-* Converts .scss to .css on the fly using Sass. Link to your .scss files as if they were .css
-   "styles.css" will automatically pick up "styles.scss", compile it and serve it to the browser
+== Core idea of Vitrine
 
-CoffeeScript and SASS will be served right from your "public" directory, if there are no stylesheets
-with the same names. Templates from "views" will be used for pages that do not exist in HTML form.
+You want a server that will automatically wrap your CoffeeScript and SASS assets, and allow
+some rudimentary templating. This is practically enough for putting together MVP prototypes,
+especially as far as single-page apps go.
 
-If you have errors in your CoffeeScript that prevent it from compiling you will get an error in your browser
-console. If you have CSS errors that prevent the SASS stylesheets from compiling you will get an error message
-in front of your body element.
+== How it works.
 
-Vitrine will not do any minification, packaging or baking at this point - it's meant to be like a display case.
-If you have a file called 'layout.erb' (or any other extension) it is going to be used as layout, but you can also do without it.
+Vitrine assumes that there are two directories under the current tree:
+* "public" - for the JS, for CSS and SCSS and in general all the static files server straight out
+* "views" - for the templates
+
+== Automatic compilation of assets
+
+From there on, any .scss file you shove into the "public" directory can be referenced as ".css" -
+Vitrine will automatically compile it via SASS. Same thing applies to CoffeeScript - put .coffee
+files in "public", and reference them as .js files.
+
+Both of the above work as passthrough URLs - if you have real JS in there the files will be served
+as static assets. Also, once you compile the site for deployment your links won't go stale.
+
+Vitrine will try to show you sensible errors if your SCSS or CoffeeScript fail to compile.
+
+== Automatic template pickup
+
+If you have "views" available, Vitrine will try to pick up any usable file for any URL without extensions.
+From there on, it's going to try to render it with the automatically picked template engine using the
+standard Sinatra facilities.
+
+== Packaging and baking
+
+At this point the best way to bake a Vitrine site is to crawl it externally, but we are going to implement
+baking at some point.
 
 == Contributing to vitrine
  
