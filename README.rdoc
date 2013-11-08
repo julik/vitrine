@@ -32,6 +32,11 @@ If you have "views" available, Vitrine will try to pick up any usable file for a
 From there on, it's going to try to render it with the automatically picked template engine using the
 standard Sinatra facilities.
 
+== Automatic reload via Guard
+
+If your project already has a Guardfile, Vitrine will inject live-reloading hooks into your HTML using
+rack-livereload, so you won't need browser extensions at all.
+
 == Packaging and baking
 
 At this point the best way to bake a Vitrine site is to crawl it externally, but we are going to implement

@@ -1,6 +1,7 @@
 require 'sinatra/base'
 require 'coffee-script'
 require 'sass'
+require 'pathname'
 
 require_relative 'version'
 
@@ -20,19 +21,22 @@ module Vitrine
     end
   end
   
-  # Will compile all SCSS and CoffeeScript, and also crawl the template tree and generate
-  # HTML for all of the files in the template tree. The resulting files will be copied to
-  # a directory of the build.
-  # def self.build!
-  
   # Run the server, largely stolen from Serve
   def self.run(options = DEFAULTS)
     check_dirs_present!
     
     app = Rack::Builder.new do
-      use Rack::CommonLogger
       use Rack::ShowStatus
       use Rack::ShowExceptions
+      
+      guardfile_path = options[:root] + '/Guardfile'
+      if File.exist?(guardfile_path)
+        $stderr.puts "Attaching LiveReload via Guardfile at #{guardfile_path.inspect}"
+        # Assume livereload is engaged
+        use Rack::LiveReload
+      else
+        $stderr.puts "No Guardfile found, so there won't be any livereload injection"
+      end
       
       vitrine = Vitrine::App.new
       vitrine.settings.set :root, options[:root]
@@ -64,6 +68,8 @@ module Vitrine
   end
 end
 
+require 'rack-livereload'
+
 # A little idiosyncrastic asset server.
 # Does very simple things:
 # * sensible detector for default pages (they render from Sinatra view templates)
@@ -76,18 +82,14 @@ class Vitrine::App < Sinatra::Base
   set :root, File.expand_path(File.dirname(__FILE__))
   set :views, lambda { File.join(settings.root, "views") }
   
-    
-  # Use Rack::TryStatic to attempt to load files from public first
-# require 'rack/contrib/try_static'
-# use Rack::TryStatic,
-#   :root => (settings.root + '/public'),
-#   :urls => %w(/), :try => %w(.html index.html /index.html)
+ 
   
   # For extensionless things try to pick out the related templates
   # from the views directory, and render them with a default layout
   get /^([^\.]+)$/ do | extensionless_path |
     render_template(extensionless_path)
   end
+  
   
   # Allow "fake" form submits
   post /^([^\.]+)$/ do | extensionless_path |
@@ -122,7 +124,9 @@ class Vitrine::App < Sinatra::Base
       raise "No template found - tried #{err}"
     end
     
-    $stderr.puts "Rendering via template #{template_path.inspect}"
+    relative_path = Pathname.new(template_path).relative_path_from(Pathname.new(settings.views))
+    
+    $stderr.puts "-> #{extensionless_path.inspect} : Rendering via template #{relative_path.to_s.inspect}"
     
     locals = {}
     # Auto-pick the template engine out of the extension
