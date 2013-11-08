@@ -76,6 +76,7 @@ class Vitrine::App < Sinatra::Base
   set :root, File.expand_path(File.dirname(__FILE__))
   set :views, lambda { File.join(settings.root, "views") }
   
+    
   # Use Rack::TryStatic to attempt to load files from public first
 # require 'rack/contrib/try_static'
 # use Rack::TryStatic,
@@ -85,6 +86,15 @@ class Vitrine::App < Sinatra::Base
   # For extensionless things try to pick out the related templates
   # from the views directory, and render them with a default layout
   get /^([^\.]+)$/ do | extensionless_path |
+    render_template(extensionless_path)
+  end
+  
+  # Allow "fake" form submits
+  post /^([^\.]+)$/ do | extensionless_path |
+    render_template(extensionless_path)
+  end
+  
+  def render_template(extensionless_path)
     # Find the related view
     specific_view = extensionless_path + ".*"
     view_index = extensionless_path + "/index.*"
