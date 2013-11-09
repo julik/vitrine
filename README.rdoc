@@ -39,6 +39,9 @@ If you have the "views" directory available, Vitrine will try to pick up any usa
 From there on, it's going to try to render it with the automatically picked template engine using the
 standard Sinatra facilities.
 
+If you are writing an SPA, you can make a file called "catch_all.erb" which is going to be the fall-through template
+for all missing URLs without extension.
+
 == Automatic reload via Guard
 
 If your project already has a Guardfile, Vitrine will inject live-reloading hooks into your HTML using
