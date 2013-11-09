@@ -1,13 +1,16 @@
 require 'sinatra/base'
 require 'coffee-script'
+#require 'coffee-script-source'
 require 'sass'
 require 'pathname'
 
 require_relative 'version'
 require_relative 'atomic_write'
+require_relative 'sourcemaps'
 
 module Vitrine
   DEFAULTS = { root: Dir.getwd, port: 4000, host: '127.0.0.1' }
+  SEED = rand
   
   def self.check_dirs_present!
     views = DEFAULTS[:root] + '/views'
@@ -134,11 +137,7 @@ class Vitrine::App < Sinatra::Base
     template_engine = File.extname(template_path).gsub(/^\./, '')
     render(template_engine, File.read(template_path), :layout => get_layout, :locals => locals)
   end
-  
-  def get_layout
-    layouts = Dir.glob(File.join(settings.views, 'layout.*'))
-    layouts.any? ? :layout : false
-  end
+
   
   # Try to find SCSS replacement for missing CSS
   get /(.+)\.css/ do | basename |
@@ -156,8 +155,46 @@ class Vitrine::App < Sinatra::Base
     end
   end
   
+  # Generate a sourcemap for CoffeeScript files
+  get /(.+)\.js\.map$/ do | basename |
+    begin
+      coffee_source = File.join(settings.root, 'public', "#{basename}.coffee")
+      content_type 'application/json', :charset => 'utf-8'
+      mtime_cache(coffee_source) do
+        Vitrine.build_coffeescript_source_map_body(coffee_source, File.join(settings.root, 'public'))
+      end
+    rescue Errno::ENOENT # Missing CoffeeScript
+      halt 404, "No coffeescript file found to generate the map for"
+    rescue Exception => e # CS syntax error or something alike
+      # inject it into the document
+      'console.error(%s)' % [e.class, "\n", "--> ", e.message].join.inspect
+    end
+  end
+  
+  # Try to find CoffeeScript replacement for missing JS
+  get /(.+)\.js$/ do | basename |
+    # If this file is not found resort back to a coffeescript
+    begin
+      coffee_source = File.join(settings.root, 'public', "#{basename}.coffee")
+      content_type 'text/javascript', :charset => 'utf-8'
+      mtime_cache(coffee_source) do
+        ["//# sourceMappingURL=#{basename}.js.map", CoffeeScript.compile(File.read(coffee_source))].join("\n")
+      end
+    rescue Errno::ENOENT # Missing CoffeeScript
+      halt 404, "No such JS file and could not find a .coffee replacement"
+    rescue Exception => e # CS syntax error or something alike
+      # inject it into the document
+      'console.error(%s)' % [e.class, "\n", "--> ", e.message].join.inspect
+    end
+  end
+  
+  
   def mtime_cache(path, &blk)
-    key = [File.expand_path(path), File.mtime(path)]
+    # Mix in the request URL into the cache key so that we can hash
+    # .map sourcemaps and .js compiles based off of the same file path
+    # and mtime
+    
+    key = [File.expand_path(path), File.mtime(path), request.path_info, Vitrine::SEED]
     cache_sha = Digest::SHA1.hexdigest(Marshal.dump(key))
     
     p = File.join('/tmp', cache_sha)
@@ -165,27 +202,17 @@ class Vitrine::App < Sinatra::Base
       return File.read(p)
     else
       Vitrine.atomic_write(p) do |f|
-        yield.tap do | body |
-          $stderr.puts "---> Recompiling #{path}"
-          f.write(body)
-        end
+        $stderr.puts "---> Recompiling #{path}"
+        body = yield
+        f.write(body)
+        return body
       end
     end
   end
   
+  def get_layout
+    layouts = Dir.glob(File.join(settings.views, 'layout.*'))
+    layouts.any? ? :layout : false
+  end
   
-  # Try to find CoffeeScript replacement for missing JS
-  get /(.+)\.js/ do | basename |
-    # If this file is not found resort back to a coffeescript
-    begin
-      coffee_source = File.join(settings.root, 'public', "#{basename}.coffee")
-      content_type 'text/javascript', :charset => 'utf-8'
-      mtime_cache(coffee_source) { CoffeeScript.compile(File.read(coffee_source)) }
-    rescue Errno::ENOENT # Missing CoffeeScript
-      halt 404, "No such JS file and could not find a .coffee replacement"
-    rescue Exception => e # CS syntax error or something alike
-      # inject it into the document
-      'console.error(%s)' % [e.class, "\n", "--> ", e.message].join.inspect
-    end
-  end    
 end

@@ -22,8 +22,10 @@ Vitrine assumes that there are two directories under the current tree:
 == Automatic compilation of assets
 
 From there on, any .scss file you shove into the "public" directory can be referenced as ".css" -
-Vitrine will automatically compile it via SASS. Same thing applies to CoffeeScript - put .coffee
-files in "public", and reference them as .js files.
+Vitrine will automatically compile it via SASS.
+
+Same thing applies to CoffeeScript - put .coffee files in "public", and reference them as .js files.
+Vitrine will generate you source maps on the fly for pleasant browser debugging.
 
 Both of the above work as passthrough URLs - if you have real JS in there the files will be served
 as static assets. Also, once you compile the site for deployment your links won't go stale.
