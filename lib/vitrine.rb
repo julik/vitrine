@@ -4,6 +4,7 @@ require 'sass'
 require 'pathname'
 
 require_relative 'version'
+require_relative 'atomic_write'
 
 module Vitrine
   DEFAULTS = { root: Dir.getwd, port: 4000, host: '127.0.0.1' }
@@ -144,7 +145,7 @@ class Vitrine::App < Sinatra::Base
     begin
       content_type 'text/css', :charset => 'utf-8'
       scss_source_path = File.join(settings.root, 'public', "#{basename}.scss")
-      Sass.compile_file(scss_source_path)
+      mtime_cache(scss_source_path) { Sass.compile_file(scss_source_path) }
     rescue Errno::ENOENT # Missing SCSS
       halt 404, "No such CSS or SCSS file found"
     rescue Exception => e # CSS syntax error or something alike
@@ -154,13 +155,31 @@ class Vitrine::App < Sinatra::Base
     end
   end
   
+  def mtime_cache(path, &blk)
+    key = [File.expand_path(path), File.mtime(path)]
+    cache_sha = Digest::SHA1.hexdigest(Marshal.dump(key))
+    
+    p = File.join('/tmp', cache_sha)
+    if File.exist?(p)
+      return File.read(p)
+    else
+      Vitrine.atomic_write(p) do |f|
+        yield.tap do | body |
+          $stderr.puts "---> Recompiling #{path}"
+          f.write(body)
+        end
+      end
+    end
+  end
+  
+  
   # Try to find CoffeeScript replacement for missing JS
   get /(.+)\.js/ do | basename |
     # If this file is not found resort back to a coffeescript
     begin
-      coffee_source = File.read(File.join(settings.root, 'public', "#{basename}.coffee"))
+      coffee_source = File.join(settings.root, 'public', "#{basename}.coffee")
       content_type 'text/javascript', :charset => 'utf-8'
-      CoffeeScript.compile(coffee_source)
+      mtime_cache(coffee_source) { CoffeeScript.compile(File.read(coffee_source)) }
     rescue Errno::ENOENT # Missing CoffeeScript
       halt 404, "No such JS file and could not find a .coffee replacement"
     rescue Exception => e # CS syntax error or something alike

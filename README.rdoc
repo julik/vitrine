@@ -30,6 +30,9 @@ as static assets. Also, once you compile the site for deployment your links won'
 
 Vitrine will try to show you sensible errors if your SCSS or CoffeeScript fail to compile.
 
+Succesfully precompiled assets will be stored in your +/tmp+ to save time on next reload, and the
+cache will be automatically flushed when the source files are modified
+
 == Automatic template pickup
 
 If you have the "views" directory available, Vitrine will try to pick up any usable file for any URL without extensions.
