@@ -19,27 +19,37 @@ Vitrine assumes that there are two directories under the current tree:
 * "public" - for the JS, for CSS and SCSS and in general all the static files server straight out
 * "views" - for the templates
 
-== Automatic compilation of assets
+== Automatic compilation of SCSS
 
-From there on, any .scss file you shove into the "public" directory can be referenced as ".css" -
+Any .scss file you shove into the "public" directory can be referenced as ".css" from your HTML code.
 Vitrine will automatically compile it via SASS.
+
+== Automatic compilation of CoffeeScript and source maps
 
 Same thing applies to CoffeeScript - put .coffee files in "public", and reference them as .js files.
 Vitrine will generate you source maps on the fly for pleasant browser debugging.
 
-Both of the above work as passthrough URLs - if you have real JS in there the files will be served
-as static assets. Also, once you compile the site for deployment your links won't go stale.
+== Fallback to precompiled files
 
-Vitrine will try to show you sensible errors if your SCSS or CoffeeScript fail to compile.
+Both SCSS and JS links will fall through to the static versions if you cache them on the server or as a result of
+asset compilation.
 
-Succesfully precompiled assets will be stored in your +/tmp+ to save time on next reload, and the
-cache will be automatically flushed when the source files are modified
+== Sensible error messages when automatic compilation fails
 
-== Automatic template pickup
+Vitrine will try to show you sensible errors if your SCSS or CoffeeScript fail to compile due to syntax errors and
+the like.
+
+== Do not recompile on every request
+
+Succesfully compiled assets will be stored in your +/tmp+ to save time on next reload, and the
+cache will be automatically flushed when the files are requested from the browser, but only if the modification
+dates of the source files are different than before.
+
+== Automatic Ruby template pickup
 
 If you have the "views" directory available, Vitrine will try to pick up any usable file for any URL without extensions.
 From there on, it's going to try to render it with the automatically picked template engine using the
-standard Sinatra facilities.
+standard Sinatra facilities. You can use HAML, LESS, Slim, ERB, Builder or anything else you like.
 
 If you are writing an SPA, you can make a file called "catch_all.erb" which is going to be the fall-through template
 for all missing URLs without extension.
