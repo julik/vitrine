@@ -144,6 +144,7 @@ class Vitrine::App < Sinatra::Base
   get /(.+)\.css/ do | basename |
     begin
       content_type 'text/css', :charset => 'utf-8'
+      # TODO: has no handling for .sass
       scss_source_path = File.join(settings.root, 'public', "#{basename}.scss")
       mtime_cache(scss_source_path) { Sass.compile_file(scss_source_path) }
     rescue Errno::ENOENT # Missing SCSS
