@@ -1,13 +1,17 @@
 = vitrine
 
 Is a very small, simple web server one-liner for modern web-apps, a bit in the style of
-lineman, serve and such. 
+lineman, serve and such. Will display your precious stuff on port 4000.
 
 == Core idea of Vitrine
 
 You want a server that will automatically wrap your CoffeeScript and SASS assets, and allow
 some rudimentary templating. This is practically enough for putting together MVP prototypes,
-especially as far as single-page apps go.
+especially as far as single-page apps go. You want this server to not coerce you into a specific
+SCSS framework, you don't want to scaffold anything, you don't want to have any configs defined and
+you hate running wizards.
+
+If most of the above is true, Vitrine is just what you need.
 
 == How it works.
 
@@ -28,7 +32,7 @@ Vitrine will try to show you sensible errors if your SCSS or CoffeeScript fail t
 
 == Automatic template pickup
 
-If you have "views" available, Vitrine will try to pick up any usable file for any URL without extensions.
+If you have the "views" directory available, Vitrine will try to pick up any usable file for any URL without extensions.
 From there on, it's going to try to render it with the automatically picked template engine using the
 standard Sinatra facilities.
 
@@ -40,7 +44,9 @@ rack-livereload, so you won't need browser extensions at all.
 == Packaging and baking
 
 At this point the best way to bake a Vitrine site is to crawl it externally, but we are going to implement
-baking at some point.
+baking at some point. The idea is that you will end up upgrading the site to either a Node app or a Ruby app
+with it's own +config.ru+ - if after that point you still wish to use Vitrine, you can use it like a Rack
+middleware.
 
 == Contributing to vitrine
  
