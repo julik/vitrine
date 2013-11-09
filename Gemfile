@@ -1,7 +1,4 @@
 source "http://rubygems.org"
-# Add dependencies required to use your gem here.
-# Example:
-#   gem "activesupport", ">= 2.3.5"
 
 gem 'sinatra', '~> 1.4', require: 'sinatra/base'
 gem 'coffee-script', '~> 2.2'
