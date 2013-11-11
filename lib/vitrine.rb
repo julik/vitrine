@@ -10,7 +10,6 @@ require_relative 'sourcemaps'
 
 module Vitrine
   DEFAULTS = { root: Dir.getwd, port: 4000, host: '127.0.0.1' }
-  SEED = rand
   
   def self.check_dirs_present!
     views = DEFAULTS[:root] + '/views'
@@ -193,20 +192,18 @@ class Vitrine::App < Sinatra::Base
     # Mix in the request URL into the cache key so that we can hash
     # .map sourcemaps and .js compiles based off of the same file path
     # and mtime
-    
-    key = [File.expand_path(path), File.mtime(path), request.path_info, Vitrine::SEED]
+    key = [File.expand_path(path), File.mtime(path), request.path_info, settings.root]
     cache_sha = Digest::SHA1.hexdigest(Marshal.dump(key))
     
-    p = File.join('/tmp', cache_sha)
-    if File.exist?(p)
-      return File.read(p)
-    else
+    p = '/tmp/vitrine-%s' % cache_sha
+    begin
+      File.read(p)
+    rescue Errno::ENOENT => e
       Vitrine.atomic_write(p) do |f|
-        $stderr.puts "---> Recompiling #{path}"
-        body = yield
-        f.write(body)
-        return body
+        $stderr.puts "---> Recompiling #{path} for #{request.path_info}"
+        f.write(yield)
       end
+      retry
     end
   end
   
