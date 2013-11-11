@@ -3,7 +3,8 @@ source "http://rubygems.org"
 gem 'sinatra', '~> 1.4', require: 'sinatra/base'
 gem 'coffee-script', '~> 2.2'
 gem 'sass', '~> 3'
-gem 'guard'
+gem 'guard', '~> 2.2'
+gem 'guard-livereload'
 gem 'rack-livereload'
 
 # Add dependencies to develop your gem here.
