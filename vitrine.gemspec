@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "vitrine"
-  s.version = "0.0.7"
+  s.version = "0.0.9"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Julik Tarkhanov"]
-  s.date = "2013-11-08"
+  s.date = "2013-11-11"
   s.description = " Serves ERB templates with live CoffeeScript and SASS "
   s.email = "me@julik.nl"
   s.executables = ["vitrine"]
@@ -24,6 +24,8 @@ Gem::Specification.new do |s|
     "README.rdoc",
     "Rakefile",
     "bin/vitrine",
+    "lib/atomic_write.rb",
+    "lib/sourcemaps.rb",
     "lib/version.rb",
     "lib/vitrine.rb",
     "test/helper.rb",
@@ -33,11 +35,11 @@ Gem::Specification.new do |s|
   s.homepage = "http://github.com/julik/vitrine"
   s.licenses = ["MIT"]
   s.require_paths = ["lib"]
-  s.rubygems_version = "1.8.25"
+  s.rubygems_version = "2.0.6"
   s.summary = "Quickie micro-app preview server"
 
   if s.respond_to? :specification_version then
-    s.specification_version = 3
+    s.specification_version = 4
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<sinatra>, ["~> 1.4"])
