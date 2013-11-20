@@ -187,6 +187,7 @@ class Vitrine::App < Sinatra::Base
     end
   end
   
+  require 'fileutils'
   
   def mtime_cache(path, &blk)
     # Mix in the request URL into the cache key so that we can hash
@@ -195,7 +196,9 @@ class Vitrine::App < Sinatra::Base
     key = [File.expand_path(path), File.mtime(path), request.path_info, settings.root]
     cache_sha = Digest::SHA1.hexdigest(Marshal.dump(key))
     
-    p = '/tmp/vitrine-%s' % cache_sha
+    # Store in a temp dir
+    FileUtils.mkdir_p '/tmp/vitrine'
+    p = '/tmp/vitrine/%s' % cache_sha
     begin
       File.read(p)
     rescue Errno::ENOENT => e
