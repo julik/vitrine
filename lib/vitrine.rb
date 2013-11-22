@@ -17,9 +17,9 @@ module Vitrine
       $stderr.puts "WARNING: `views' directory not found under the current tree, you might want to create it"
     end
     
-    public = DEFAULTS[:root] + '/public'
-    unless File.exist?(views) and File.directory?(views)
-      $stderr.puts "ERROR: `public' directory not found under the current tree, you might want to create it"
+    public_dir = DEFAULTS[:root] + '/public'
+    unless File.exist?(public_dir) and File.directory?(public_dir)
+      $stderr.puts "ERROR: `public' directory not found under the current tree, you should create it. Vitrine won't run without it"
       exit 1
     end
   end
