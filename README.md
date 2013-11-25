@@ -16,14 +16,14 @@ If most of the above is true, Vitrine is just what you need.
 ## All you need is some `public`
 
 Vitrine assumes that there are two directories under the current tree:
-* "public" - for the JS, for CSS and SCSS and in general all the static files served straight out
-* "views" - for the templates, in any Ruby templating format you have
+* `public` - for the JS, for CSS and SCSS and in general all the static files served straight out
+* `views` - for the templates, in any Ruby templating format you have
 
 ## Automatic compilation
 
 Vitrine is for **development**. It takes runtime compilation to 11 and beyound. Running tasks
 is all fine and good when you build out the app for production, but when iterating on UI it's essential
-to be able to just yank the file in there and carry on.
+to be able to just yank the file 3in there and carry on.
 
 ### For SCSS/SASS
 
