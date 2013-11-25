@@ -153,6 +153,7 @@ class Vitrine::App < Sinatra::Base
       # TODO: has no handling for .sass
       scss_source_path = File.join(settings.root, 'public', "#{basename}.scss")
       mtime_cache(scss_source_path) do
+        # TODO: Examine http://sass-lang.com/documentation/file.SASS_REFERENCE.html
         Sass.compile_file(scss_source_path, cache_location: '/tmp/vitrine/sass-cache')
       end
     rescue Errno::ENOENT # Missing SCSS
