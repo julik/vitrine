@@ -154,9 +154,12 @@ class Vitrine::App < Sinatra::Base
     rescue Errno::ENOENT # Missing SCSS
       halt 404, "No such CSS or SCSS file found"
     rescue Exception => e # CSS syntax error or something alike
-      # use smart CSS to inject an error message into the document
-      'body:before { background: white; font-family: sans-serif; color: red; font-size: 14px; content: %s }' % [e.class, 
-          "\n", "--> ", e.message].join.inspect
+      # Add a generated DOM element before <body/> to inject
+      # a visible error message
+      error_tpl = 'body:before { background: white; font-family: sans-serif; color: red; font-size: 14px; content: %s }'
+      css_message = error_tpl % [e.class, "\n", "--> ", e.message].join.inspect
+      
+      halt 500, css_message
     end
   end
   
@@ -180,15 +183,16 @@ class Vitrine::App < Sinatra::Base
     # If this file is not found resort back to a coffeescript
     begin
       coffee_source = File.join(settings.root, 'public', "#{basename}.coffee")
-      content_type 'text/javascript', :charset => 'utf-8'
+      content_type 'text/javascript'
       mtime_cache(coffee_source) do
         ["//# sourceMappingURL=#{basename}.js.map", CoffeeScript.compile(File.read(coffee_source))].join("\n")
       end
     rescue Errno::ENOENT # Missing CoffeeScript
       halt 404, "No such JS file and could not find a .coffee replacement"
     rescue Exception => e # CS syntax error or something alike
-      # inject it into the document
-      'console.error(%s)' % [e.class, "\n", "--> ", e.message].join.inspect
+      # Inject the syntax error into the browser console
+      console_message = 'console.error(%s)' % [e.class, "\n", "--> ", e.message].join.inspect
+      halt 500, console_message
     end
   end
   
@@ -208,9 +212,12 @@ class Vitrine::App < Sinatra::Base
       etag File.mtime(p)
       File.read(p)
     else
-      Vitrine.atomic_write(p) do |f|
-        $stderr.puts "---> Recompiling #{path} for #{request.path_info}"
-        f.write(yield)
+      yield.tap do | body |
+        Vitrine.atomic_write(p) do |f|
+          $stderr.puts "---> Recompiling #{path} for #{request.path_info}"
+          f.write body
+        end
+        etag File.mtime(p)
       end
     end
   end
