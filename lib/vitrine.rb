@@ -84,25 +84,29 @@ class Vitrine::App < Sinatra::Base
   set :raise_errors, true
   set :root, File.expand_path(File.dirname(__FILE__))
   set :views, lambda { File.join(settings.root, "views") }
-  
-  # Try static index.html files first
-  use Rack::TryStatic,
-      :root => "public",  # static files root dir
-      :urls => %w[/],     # match all requests 
-      :try => ['.html', 'index.html', '/index.html'] # try these postfixes sequentially
+  set :public_dir, lambda { File.join(settings.root, "public") }
   
   # For extensionless things try to pick out the related templates
   # from the views directory, and render them with a default layout.
   # If no template is found fallback to halting on 404
   # so that Vitrine can be cascaded from.
   get /^([^\.]+)$/ do | extensionless_path |
-    render_template(extensionless_path)
+    render_template_or_static(extensionless_path)
   end
-  
   
   # Allow "fake" form submits
   post /^([^\.]+)$/ do | extensionless_path |
-    render_template(extensionless_path)
+    render_template_or_static(extensionless_path)
+  end
+  
+  def render_template_or_static(extensionless_path)
+    probable_html = extensionless_path + "/index.html"
+    html_path = File.join(settings.public_dir, probable_html)
+    if File.exist? html_path
+      send_file html_path
+    else
+      render_template(extensionless_path)
+    end
   end
   
   def render_template(extensionless_path)
@@ -119,9 +123,7 @@ class Vitrine::App < Sinatra::Base
     possibilites = possible_globs.map do | pattern |
       Dir.glob(File.join(settings.views, pattern))
     end.flatten.reject do | e |
-      e =~ /\.DS_Store/ # except DS_Store
-    end.reject do | e |
-      e =~ /(\.+)$/ # and except directory self-links
+      File.basename(e) =~ /^\./ # except invisibles and self-links
     end
     
     # Try the first template that has been found

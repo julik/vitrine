@@ -63,14 +63,14 @@ class TestVitrine < Test::Unit::TestCase
     assert_equal RUBY_VERSION, last_response.body
   end
   
-#  def test_fetches_index_in_root_if_present
-#    write_public 'index.html' do | f |
-#      f.write '<!DOCTYPE html><html></html>'
-#    end
-#    
-#    get '/'
-#    assert_equal 200, last_response.status, "Should have responded with 404 since there is no template"
-#  end
+  def test_fetches_index_in_root_if_present
+    write_public 'index.html' do | f |
+      f.write '<!DOCTYPE html><html></html>'
+    end
+    
+    get '/'
+    assert last_response.ok?, "Should have fetched the index.html"
+  end
   
 #  def test_fetches_index_in_subdirectory_if_present
 #    write_public 'items/index.html' do | f |
