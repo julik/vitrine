@@ -5,6 +5,7 @@ gem 'coffee-script', '~> 2.2'
 gem 'sass', '~> 3'
 gem 'guard', '~> 2.2'
 gem 'guard-livereload'
+gem 'rack-contrib'
 gem 'rack-livereload'
 
 # Add dependencies to develop your gem here.

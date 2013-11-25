@@ -1,6 +1,6 @@
 require 'sinatra/base'
 require 'coffee-script'
-#require 'coffee-script-source'
+require 'rack/contrib/try_static'
 require 'sass'
 require 'pathname'
 
@@ -85,10 +85,16 @@ class Vitrine::App < Sinatra::Base
   set :root, File.expand_path(File.dirname(__FILE__))
   set :views, lambda { File.join(settings.root, "views") }
   
- 
+  # Try static index.html files first
+  use Rack::TryStatic,
+      :root => "public",  # static files root dir
+      :urls => %w[/],     # match all requests 
+      :try => ['.html', 'index.html', '/index.html'] # try these postfixes sequentially
   
   # For extensionless things try to pick out the related templates
-  # from the views directory, and render them with a default layout
+  # from the views directory, and render them with a default layout.
+  # If no template is found fallback to halting on 404
+  # so that Vitrine can be cascaded from.
   get /^([^\.]+)$/ do | extensionless_path |
     render_template(extensionless_path)
   end
@@ -124,7 +130,7 @@ class Vitrine::App < Sinatra::Base
     # If nothing is found just bail
     unless template_path
       err = possible_globs.map{|e| e.inspect }.join(', ')
-      raise "No template found - tried #{err}"
+      halt 404, "No template found - tried #{err}"
     end
     
     relative_path = Pathname.new(template_path).relative_path_from(Pathname.new(settings.views))
@@ -149,7 +155,7 @@ class Vitrine::App < Sinatra::Base
       halt 404, "No such CSS or SCSS file found"
     rescue Exception => e # CSS syntax error or something alike
       # use smart CSS to inject an error message into the document
-      'body:before { color: red; font-size: 2em; content: %s }' % [e.class, 
+      'body:before { background: white; font-family: sans-serif; color: red; font-size: 14px; content: %s }' % [e.class, 
           "\n", "--> ", e.message].join.inspect
     end
   end
@@ -165,8 +171,7 @@ class Vitrine::App < Sinatra::Base
     rescue Errno::ENOENT # Missing CoffeeScript
       halt 404, "No coffeescript file found to generate the map for"
     rescue Exception => e # CS syntax error or something alike
-      # inject it into the document
-      'console.error(%s)' % [e.class, "\n", "--> ", e.message].join.inspect
+      halt 400, 'Compliation of the related CoffeeScript file failed'
     end
   end
   
@@ -199,14 +204,14 @@ class Vitrine::App < Sinatra::Base
     # Store in a temp dir
     FileUtils.mkdir_p '/tmp/vitrine'
     p = '/tmp/vitrine/%s' % cache_sha
-    begin
+    if File.exist?(p)
+      etag File.mtime(p)
       File.read(p)
-    rescue Errno::ENOENT => e
+    else
       Vitrine.atomic_write(p) do |f|
         $stderr.puts "---> Recompiling #{path} for #{request.path_info}"
         f.write(yield)
       end
-      retry
     end
   end
   
