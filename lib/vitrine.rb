@@ -152,7 +152,9 @@ class Vitrine::App < Sinatra::Base
       content_type 'text/css', :charset => 'utf-8'
       # TODO: has no handling for .sass
       scss_source_path = File.join(settings.root, 'public', "#{basename}.scss")
-      mtime_cache(scss_source_path) { Sass.compile_file(scss_source_path) }
+      mtime_cache(scss_source_path) do
+        Sass.compile_file(scss_source_path, cache_location: '/tmp/vitrine/sass-cache')
+      end
     rescue Errno::ENOENT # Missing SCSS
       halt 404, "No such CSS or SCSS file found"
     rescue Exception => e # CSS syntax error or something alike
