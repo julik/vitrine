@@ -137,7 +137,7 @@ class Vitrine::App < Sinatra::Base
     
     relative_path = Pathname.new(template_path).relative_path_from(Pathname.new(settings.views))
     
-    $stderr.puts "-> #{extensionless_path.inspect} : Rendering via template #{relative_path.to_s.inspect}"
+    # $stderr.puts "-> #{extensionless_path.inspect} : Rendering via template #{relative_path.to_s.inspect}"
     
     locals = {}
     # Auto-pick the template engine out of the extension
@@ -216,7 +216,7 @@ class Vitrine::App < Sinatra::Base
     else
       yield.tap do | body |
         Vitrine.atomic_write(p) do |f|
-          $stderr.puts "---> Recompiling #{path} for #{request.path_info}"
+          # $stderr.puts "---> Recompiling #{path} for #{request.path_info}"
           f.write body
         end
         etag File.mtime(p)
