@@ -108,6 +108,24 @@ class TestVitrine < Test::Unit::TestCase
       'Should include the reference to the source map'
   end
   
+  def test_compiles_coffeescript_sourcemap
+    
+    FileUtils.mkdir_p File.join(@tempdir, 'public', 'js')
+    
+    write_public 'js/nice.coffee' do | f |
+      f.puts 'alert "rockage!"'
+    end
+    
+    # Sourcemap will only ever get requested AFTER the corresponding JS file
+    get '/js/nice.js'
+    assert last_response.ok?
+    
+    get '/js/nice.js.map'
+    ref = {"version"=>3, "file"=>"", "sourceRoot"=>"", "sources"=>["/js/nice.coffee"], 
+      "names"=>[], "mappings"=>"AAAA;CAAA,CAAA,GAAA,KAAA;CAAA"}
+    assert_equal ref, JSON.parse(last_response.body)
+  end
+  
   def test_sends_vanilla_js_if_its_present
     write_public 'vanilla.js' do | f |
       f.puts 'vanilla();'
