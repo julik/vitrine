@@ -2,7 +2,7 @@ require_relative 'vitrine'
 require 'rack-livereload'
 
 module Vitrine::Server
-  DEFAULTS = { root: Dir.getwd, port: 4000 }
+  DEFAULTS = { root: Dir.getwd, port: 4000, :address => '127.0.0.1' }
   
   def self.check_dirs_present!(options)
     views = options[:root] + '/views'
