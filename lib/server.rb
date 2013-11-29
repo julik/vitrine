@@ -17,15 +17,12 @@ module Vitrine::Server
     end
   end
   
-  # Run the server, largely stolen from Serve
-  def self.start(passed_options = {})
-    options = DEFAULTS.merge(passed_options)
-    check_dirs_present!(options)
-    
-    app = Rack::Builder.new do
+  # Builds the Rack application with all the wrappers
+  def self.build_app(options)
+    Rack::Builder.new do
       use Rack::ShowStatus
       use Rack::ShowExceptions
-      
+  
       guardfile_path = options[:root] + '/Guardfile'
       if File.exist?(guardfile_path)
         $stderr.puts "Attaching LiveReload via Guardfile at #{guardfile_path.inspect}"
@@ -34,12 +31,16 @@ module Vitrine::Server
       else
         $stderr.puts "No Guardfile found, so there won't be any livereload injection"
       end
-      
+  
       vitrine = Vitrine::App.new
       vitrine.settings.set :root, options[:root]
       run vitrine
     end
-    
+  end
+  
+  # Pick a server handler engine and run the passed
+  # app on it, honoring the passed options
+  def self.start_server(app, options)
     begin
       # Try Thin
       thin = Rack::Handler.get('thin')
@@ -62,5 +63,14 @@ module Vitrine::Server
         end
       end
     end
+  end
+  
+  # Run the server, largely stolen from Serve
+  def self.start(passed_options = {})
+    options = DEFAULTS.merge(passed_options)
+    check_dirs_present!(options)
+    
+    app = build_app(options)
+    start_server(app, options)
   end
 end
