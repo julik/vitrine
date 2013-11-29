@@ -1,5 +1,20 @@
 #!/usr/bin/env ruby
-
 lib = File.dirname(__FILE__) + '/../lib'
-require lib + '/vitrine'
-Vitrine.run
+require lib + '/server'
+require 'optparse'
+
+options = {}
+
+op = OptionParser.new
+op.banner = "Usage: cd ~/sites/my-glorious-app; vitrine -p 9292"
+op.on("-p", "--port NUMBER", Integer, "Run on the specified port (default is 4000)") do | port |
+  options[:port] = port
+end
+
+op.on("-r", "--root DIR", String, "Override the root directory (defaults to CWD)") do | rootdir |
+  options[:root] = rootdir
+end
+
+op.parse!
+
+Vitrine::Server.start(options)
