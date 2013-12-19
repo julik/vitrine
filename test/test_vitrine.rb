@@ -12,16 +12,14 @@ class TestVitrine < Test::Unit::TestCase
   end
   
   def write_public(name)
-    FileUtils.mkdir_p @tempdir + '/public'
+    location = FileUtils.mkdir_p(File.dirname(File.join(@tempdir, 'public', name)))
     File.open(File.join(@tempdir, 'public', name), 'w') do | f |
       yield f
     end
   end
   
   def app
-    vitrine = Vitrine::App.new
-    vitrine.settings.set :root, @tempdir
-    vitrine
+    Vitrine::App.new.tap { |a| a.settings.set :root, @tempdir }
   end
   
   def test_fetch_index_without_index_should_404
@@ -72,15 +70,15 @@ class TestVitrine < Test::Unit::TestCase
     assert last_response.ok?, "Should have fetched the index.html"
   end
   
-#  def test_fetches_index_in_subdirectory_if_present
-#    write_public 'items/index.html' do | f |
-#      f.write 'this just in'
-#    end
-#    
-#    get '/items'
-#    assert last_response.ok?, "Should have responded with 404 since there is no template"
-#    assert_equal 'this just in', last_response.body
-#  end
+  def test_fetches_index_in_subdirectory_if_present
+    write_public 'items/index.html' do | f |
+      f.write 'this just in'
+    end
+    
+    get '/items'
+    assert last_response.ok?, "Should have responded with 404 since there is no template"
+    assert_equal 'this just in', last_response.body
+  end
 
   def test_passes_coffeescript_as_raw_file
     write_public 'nice.coffee' do | f |

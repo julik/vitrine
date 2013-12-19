@@ -19,7 +19,12 @@ class Vitrine::App < Sinatra::Base
   set :raise_errors, true
   set :root, File.expand_path(File.dirname(__FILE__))
   set :views, lambda { File.join(settings.root, "views") }
+  
+  # Returns the path to the public directory
   set :public_dir, lambda { File.join(settings.root, "public") }
+  
+  # Sets whether Vitrine will output messages about dynamic assets
+  set :silent, true
   
   # For extensionless things try to pick out the related templates
   # from the views directory, and render them with a default layout.
@@ -168,6 +173,6 @@ class Vitrine::App < Sinatra::Base
   end
   
   def log(msg)
-    $stderr.puts msg
+    $stderr.puts(msg) unless settings.silent?
   end
 end
