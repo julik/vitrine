@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "vitrine"
-  s.version = "0.0.11"
+  s.version = "0.0.12"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Julik Tarkhanov"]
-  s.date = "2013-11-25"
+  s.date = "2013-12-19"
   s.description = " Serves ERB templates with live CoffeeScript and SASS "
   s.email = "me@julik.nl"
   s.executables = ["vitrine"]
@@ -26,11 +26,13 @@ Gem::Specification.new do |s|
     "Rakefile",
     "bin/vitrine",
     "lib/atomic_write.rb",
+    "lib/server.rb",
     "lib/sourcemaps.rb",
     "lib/version.rb",
     "lib/vitrine.rb",
     "test/helper.rb",
     "test/test_vitrine.rb",
+    "test/test_vitrine_in_rack_stack.rb",
     "vitrine.gemspec"
   ]
   s.homepage = "http://github.com/julik/vitrine"
