@@ -67,7 +67,7 @@ Vitrine will `etag` all the precompiled assets for faster reloading.
 
 At this point the best way to bake a Vitrine site is to crawl it externally, but we are going to implement
 baking at some point. The idea is that you will end up upgrading the site to either a Node app or a Ruby app
-with it's own +config.ru+ - if after that point you still wish to use Vitrine, you can use it like a Rack
+with it's own `config.ru` - if after that point you still wish to use Vitrine, you can use it like a Rack
 middleware.
 
 ## Using as a middleware
