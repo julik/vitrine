@@ -76,9 +76,9 @@ Most actions in Vitrine will fall through to 404, so `Vitrine::App` can be used 
 Put Vitrine into your application stack and it will complement your main application very nicely. But don't
 forget to set `:root` - like so:
 
-  use Vitrine::App.new do | vitrine |
-    vitrine.settings.set :root => File.dirname(__FILE__)
-  end
+    use Vitrine::App.new do | vitrine |
+      vitrine.settings.set :root => File.dirname(__FILE__)
+    end
 
 ## Contributing to vitrine
  
