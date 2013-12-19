@@ -17,11 +17,6 @@ class Vitrine::App < Sinatra::Base
   set :static, true
   set :show_exceptions, false
   set :raise_errors, true
-  set :root, File.expand_path(File.dirname(__FILE__))
-  set :views, lambda { File.join(settings.root, "views") }
-  
-  # Returns the path to the public directory
-  set :public_dir, lambda { File.join(settings.root, "public") }
   
   # Sets whether Vitrine will output messages about dynamic assets
   set :silent, true
@@ -41,7 +36,7 @@ class Vitrine::App < Sinatra::Base
   
   def render_template_or_static(extensionless_path)
     probable_html = extensionless_path + "/index.html"
-    html_path = File.join(settings.public_dir, probable_html)
+    html_path = File.join(settings.public_folder, probable_html)
     if File.exist? html_path
       send_file html_path
     else
