@@ -15,11 +15,13 @@ require_relative 'sourcemaps'
 #  and Vitrine will find them and compile them for you on the spot
 class Vitrine::App < Sinatra::Base
   set :static, true
+  
   set :show_exceptions, false
   set :raise_errors, true
   
   # Sets whether Vitrine will output messages about dynamic assets
   set :silent, true
+  set :public_folder, ->{ File.join(settings.root, 'public') }
   
   # For extensionless things try to pick out the related templates
   # from the views directory, and render them with a default layout.
@@ -36,8 +38,11 @@ class Vitrine::App < Sinatra::Base
   
   def render_template_or_static(extensionless_path)
     probable_html = extensionless_path + "/index.html"
+    
     html_path = File.join(settings.public_folder, probable_html)
     if File.exist? html_path
+      # Might want to investigate...
+      # https://github.com/elitheeli/sinatra-index/blob/master/lib/sinatra-index.rb
       send_file html_path
     else
       render_template(extensionless_path)
@@ -64,10 +69,14 @@ class Vitrine::App < Sinatra::Base
     # Try the first template that has been found
     template_path = possibilites.shift
     
-    # If nothing is found just bail
+    # If nothing is found try downstream or bail
     unless template_path
       err = possible_globs.map{|e| e.inspect }.join(', ')
-      halt 404, "No template found - tried #{err}"
+      if @app
+        return forward
+      else
+        halt 404, "No template found - tried #{err}, and no downstream Rack handler present"
+      end
     end
     
     relative_path = Pathname.new(template_path).relative_path_from(Pathname.new(settings.views))

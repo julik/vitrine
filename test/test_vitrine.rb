@@ -1,26 +1,7 @@
 require 'helper'
 
 class TestVitrine < Test::Unit::TestCase
-  include Rack::Test::Methods
-  
-  # Wrap the test run in mktimpdir where we will store our temp application
-  def run(runner)
-    Dir.mktmpdir("vitrine-tests") do | dir_path |
-      @tempdir = dir_path
-      super
-    end
-  end
-  
-  def write_public(name)
-    location = FileUtils.mkdir_p(File.dirname(File.join(@tempdir, 'public', name)))
-    File.open(File.join(@tempdir, 'public', name), 'w') do | f |
-      yield f
-    end
-  end
-  
-  def app
-    Vitrine::App.new.tap { |a| a.settings.set :root, @tempdir }
-  end
+  include Rack::Test::Methods, VitrineTesting
   
   def test_fetch_index_without_index_should_404
     get '/'
