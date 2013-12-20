@@ -7,9 +7,12 @@ class TestVitrineInRackStack < Test::Unit::TestCase
   def app
     td = temporary_app_dir
     outer = Rack::Builder.new do
-      use Vitrine::App do | v | 
-        v.settings.set root: td 
+      # The outer app
+      use Vitrine::App do |v|
+        v.settings.set root: td
       end
+      
+      # And a lobster downstream
       map "/lobster" do
         run Rack::Lobster.new
       end
