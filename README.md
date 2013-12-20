@@ -23,24 +23,16 @@ Vitrine assumes that there are two directories under the current tree:
 
 Vitrine is for **development**. It takes runtime compilation to 11 and beyound. Running tasks
 is all fine and good when you build out the app for production, but when iterating on UI it's essential
-to be able to just yank the file 3in there and carry on.
+to be able to just yank the file in there and carry on. THe compilation perks include:
 
-### For SCSS/SASS
+* Any `.scss` file you shove into the `public` directory can be referenced as `.css` from your HTML.
+  Ask for `foo.css` and `foo.scss` will be compiled on the fly.
+* Any `.coffee` file you shove into the `public` directory can be references as `.js` from your HTML.
+  Ask for `bar.js` and `bar.coffee` will be compiled on the fly.
+* CoffeeScript files will have source-maps out of the box for pleasant browser debugging.
+* Decent error messages will be shown for both invalid SCSS and invalid CoffeeScript.
 
-Any .scss file you shove into the "public" directory can be referenced as ".css" from your HTML code.
-Vitrine will automatically compile it via SASS.
-
-### For CoffeeScript, with source maps
-
-Same thing applies to CoffeeScript - put `.coffee` files in "public", and reference them as `.js` files.
-Vitrine will generate you source maps on the fly for pleasant browser debugging.
-
-## Sensible error messages when automatic compilation fails
-
-Vitrine will try to show you sensible errors if your SCSS or CoffeeScript fail to compile due to syntax errors and
-the like. CoffeeScript errors go to the browser console, and Sass errors go in a generated element on top of your page.
-
-## Do not recompile on every request
+## Asset caching
 
 Succesfully compiled assets will be cached to save time on next reload, and ETagged based on their
 mtime.
@@ -51,8 +43,8 @@ If you have the "views" directory available, Vitrine will try to pick up any usa
 From there on, it's going to try to render it with the automatically picked template engine using the
 standard Sinatra facilities. You can use HAML, LESS, Slim, ERB, Builder or anything else you like.
 
-If you are writing an SPA, you can make a file called "catch_all.erb" which is going to be the fall-through template
-for all missing URLs without extension.
+If you are writing an SPA, you can make a file called "catch_all.erb" which is going to be 
+the fall-through template for all missing URLs without extension.
 
 ## Automatic reload via Guard
 
