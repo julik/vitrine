@@ -107,8 +107,8 @@ class Vitrine::App < Sinatra::Base
       # a visible error message
       error_tpl = 'body:before { background: white; font-family: sans-serif; color: red; font-size: 14px; content: %s }'
       css_message = error_tpl % [e.class, "\n", "--> ", e.message].join.inspect
-      
-      halt 500, css_message
+      # If we halt with 500 this will not be shown as CSS
+      halt 200, css_message
     end
   end
   

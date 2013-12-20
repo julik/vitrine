@@ -174,7 +174,7 @@ class TestVitrine < Test::Unit::TestCase
     
     get '/faulty.css'
     
-    assert_equal 500, last_response.status
+    assert_equal 200, last_response.status
     assert last_response.body.include?('body:before {'), 'Should include the generated element selector'
     assert last_response.body.include?('Sass::SyntaxError'), 'Should include the syntax error class'
   end
