@@ -25,7 +25,7 @@ class TestVitrineInRackStack < Test::Unit::TestCase
   
   def test_fetch_js
     write_public('hello.coffee') do | f |
-      f << 'window.alert("Hello Coffee")'
+      f << 'window.alert "Hello Coffee"'
     end
     
     get '/hello.js'
