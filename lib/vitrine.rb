@@ -3,10 +3,12 @@ require 'coffee-script'
 require 'rack/contrib/try_static'
 require 'sass'
 require 'pathname'
+require 'fileutils'
 
 require_relative 'version'
 require_relative 'atomic_write'
 require_relative 'sourcemaps'
+require_relative 'asset_compiler'
 
 # A little idiosyncrastic asset server.
 # Does very simple things:
@@ -14,14 +16,15 @@ require_relative 'sourcemaps'
 # * automatic compilation of CoffeeScript and SASS assets - just request them with .js and .css
 #  and Vitrine will find them and compile them for you on the spot
 class Vitrine::App < Sinatra::Base
-  set :static, true
   
   set :show_exceptions, false
   set :raise_errors, true
   
   # Sets whether Vitrine will output messages about dynamic assets
   set :silent, true
-  set :public_folder, ->{ File.join(settings.root, 'public') }
+  set :public_folder, ->{ File.join(settings.root, 'public') } 
+  
+  use Vitrine::AssetCompiler
   
   # For extensionless things try to pick out the related templates
   # from the views directory, and render them with a default layout.
@@ -88,88 +91,8 @@ class Vitrine::App < Sinatra::Base
     template_engine = File.extname(template_path).gsub(/^\./, '')
     render(template_engine, File.read(template_path), :layout => get_layout, :locals => locals)
   end
-
   
-  # Try to find SCSS replacement for missing CSS
-  get /(.+)\.css/ do | basename |
-    begin
-      content_type 'text/css', :charset => 'utf-8'
-      # TODO: has no handling for .sass
-      scss_source_path = File.join(settings.root, 'public', "#{basename}.scss")
-      mtime_cache(scss_source_path) do
-        # TODO: Examine http://sass-lang.com/documentation/file.SASS_REFERENCE.html
-        Sass.compile_file(scss_source_path, cache_location: '/tmp/vitrine/sass-cache')
-      end
-    rescue Errno::ENOENT # Missing SCSS
-      halt 404, "No such CSS or SCSS file found"
-    rescue Exception => e # CSS syntax error or something alike
-      # Add a generated DOM element before <body/> to inject
-      # a visible error message
-      error_tpl = 'body:before { background: white; font-family: sans-serif; color: red; font-size: 14px; content: %s }'
-      css_message = error_tpl % [e.class, "\n", "--> ", e.message].join.inspect
-      # If we halt with 500 this will not be shown as CSS
-      halt 200, css_message
-    end
-  end
   
-  # Generate a sourcemap for CoffeeScript files
-  get /(.+)\.js\.map$/ do | basename |
-    begin
-      coffee_source = File.join(settings.root, 'public', "#{basename}.coffee")
-      content_type 'application/json', :charset => 'utf-8'
-      mtime_cache(coffee_source) do
-        Vitrine.build_coffeescript_source_map_body(coffee_source, File.join(settings.root, 'public'))
-      end
-    rescue Errno::ENOENT # Missing CoffeeScript
-      halt 404, "No coffeescript file found to generate the map for"
-    rescue Exception => e # CS syntax error or something alike
-      halt 400, 'Compliation of the related CoffeeScript file failed'
-    end
-  end
-  
-  # Try to find CoffeeScript replacement for missing JS
-  get /(.+)\.js$/ do | basename |
-    # If this file is not found resort back to a coffeescript
-    begin
-      coffee_source = File.join(settings.root, 'public', "#{basename}.coffee")
-      content_type 'text/javascript'
-      mtime_cache(coffee_source) do
-        ["//# sourceMappingURL=#{basename}.js.map", CoffeeScript.compile(File.read(coffee_source))].join("\n")
-      end
-    rescue Errno::ENOENT # Missing CoffeeScript
-      halt 404, "No such JS file and could not find a .coffee replacement"
-    rescue Exception => e # CS syntax error or something alike
-      # Inject the syntax error into the browser console
-      console_message = 'console.error(%s)' % [e.class, "\n", "--> ", e.message].join.inspect
-      halt 500, console_message
-    end
-  end
-  
-  require 'fileutils'
-  
-  def mtime_cache(path, &blk)
-    # Mix in the request URL into the cache key so that we can hash
-    # .map sourcemaps and .js compiles based off of the same file path
-    # and mtime
-    key = [File.expand_path(path), File.mtime(path), request.path_info, settings.root]
-    cache_sha = Digest::SHA1.hexdigest(Marshal.dump(key))
-    
-    # Store in a temp dir
-    FileUtils.mkdir_p '/tmp/vitrine'
-    p = '/tmp/vitrine/%s' % cache_sha
-    if File.exist?(p)
-      etag File.mtime(p)
-      File.read(p)
-    else
-      yield.tap do | body |
-        Vitrine.atomic_write(p) do |f|
-          log "---> Recompiling #{path} for #{request.path_info}"
-          f.write body
-        end
-        etag File.mtime(p)
-      end
-    end
-  end
   
   def get_layout
     layouts = Dir.glob(File.join(settings.views, 'layout.*'))
