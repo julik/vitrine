@@ -70,6 +70,9 @@ class Vitrine::AssetCompiler < Sinatra::Base
       content_type 'text/javascript'
       mtime_cache(coffee_source) do
         source_body = File.read(coffee_source)
+        # We could have sent a header, but it's a nice idea to have the
+        # sourcemap header saved if we write out the compiled JS,
+        # whereas otherwise it would have been discarded
         [
           "//# sourceMappingURL=#{basename}.js.map", 
           CoffeeScript.compile(source_body)
