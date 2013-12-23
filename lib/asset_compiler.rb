@@ -22,6 +22,10 @@ class Vitrine::AssetCompiler < Sinatra::Base
   set :show_exceptions, false
   set :raise_errors, true
   
+  # An explicit override for +public_folder+ setting,
+  # if set will take precedence over the setting
+  attr_accessor :public_dir
+  
   # Try to find SCSS replacement for missing CSS
   get /(.+)\.css/ do | basename |
     begin
@@ -112,8 +116,7 @@ class Vitrine::AssetCompiler < Sinatra::Base
     etag File.mtime(p).to_i.to_s
     File.read(p)
   end
-  
-  attr_accessor :public_dir
+
   
   # Get path to the public directory, trying (in order:)
   # self.public_dir reader

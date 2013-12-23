@@ -72,6 +72,15 @@ forget to set `:root` - like so:
       vitrine.settings.set :root => File.dirname(__FILE__)
     end
 
+You can also only opt-in to the asset compilation system of Vitrine only once you have migrated your app from
+the prototype stage into, say, a Sinatra application.
+
+Note that you _need_ to have an `ExecJS` environment on your server for this:
+
+    use Vitrine::AssetCompiler.new do | ac |
+      vitrine.settings.set :root => File.dirname(__FILE__)
+    end
+
 ## Contributing to vitrine
  
 * Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet.
