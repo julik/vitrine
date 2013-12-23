@@ -83,7 +83,8 @@ class Vitrine::AssetCompiler < Sinatra::Base
     rescue Exception => e # CS syntax error or something alike
       # Inject the syntax error into the browser console
       console_message = 'console.error(%s)' % [e.class, "\n", "--> ", e.message].join.inspect
-      halt 500, console_message
+      # Avoid 500 because it plays bad with LiveReload
+      halt 200, console_message
     end
   end
   
