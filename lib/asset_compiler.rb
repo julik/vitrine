@@ -15,6 +15,9 @@
 #
 # This allows you to use the asset compiler when the inner app 
 # is not a Sinatra application.
+#
+# Obviously, the usual limitation apply for this kind of workflow -
+# you pretty much have to have an ExecJS env on yourserver, or else...
 class Vitrine::AssetCompiler < Sinatra::Base
   set :show_exceptions, false
   set :raise_errors, true
@@ -35,7 +38,9 @@ class Vitrine::AssetCompiler < Sinatra::Base
     rescue Exception => e # CSS syntax error or something alike
       # Add a generated DOM element before <body/> to inject
       # a visible error message
-      error_tpl = 'body:before { background: white; font-family: sans-serif; color: red; font-size: 14px; content: %s }'
+      error_tpl = 'body:before {
+        background: white; padding: 3px; font-family: monospaced; color: red; 
+        font-size: 14px; content: %s }'
       css_message = error_tpl % [e.class, "\n", "--> ", e.message].join.inspect
       # If we halt with 500 this will not be shown as CSS
       halt 200, css_message
