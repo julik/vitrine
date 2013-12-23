@@ -7,8 +7,11 @@
 #   @app.settings.public_folder
 #
 # However, you can also set this setting on the app object using the
-#
-#   AssetCompiler#public_dir accessor.
+# AssetCompiler#public_dir accessor.
+#   
+#  use Vitrine::AssetCompiler do | compiler |
+#    compiler.public_dir = File.dirname(__FILE__) + '/public'
+#  end
 #
 # This allows you to use the asset compiler when the inner app 
 # is not a Sinatra application.
@@ -86,12 +89,12 @@ class Vitrine::AssetCompiler < Sinatra::Base
     # Store in a temp dir
     FileUtils.mkdir_p '/tmp/vitrine'
     p = '/tmp/vitrine/%s' % cache_sha
+    
+    # Only write it out unless a file with the same SHA does not exist
     unless File.exist?(p)
-      yield.tap do | body |
-        Vitrine.atomic_write(p) do |f|
-          log "---> Recompiling #{path} for #{request.path_info}"
-          f.write body
-        end
+      Vitrine.atomic_write(p) do |f|
+        log "---> Recompiling #{path} for #{request.path_info}"
+        f.write(yield)
       end
     end
     
