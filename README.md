@@ -1,6 +1,6 @@
 A nimble web server one-liner for modern web-apps, a bit in the style of
 [lineman](https://github.com/testdouble/lineman), [serve](https://github.com/visionmedia/serve),
-another [serve](https://github.com/jlong/serve) and such. Will display your precious stuff on port 4000.
+another [serve](https://github.com/jlong/serve) and such. Will display your precious stuff on port 9292.
 
 ## Core idea of Vitrine
 
