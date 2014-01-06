@@ -50,7 +50,7 @@ class TestVitrineAssetCompiler < Test::Unit::TestCase
     
     assert_equal 200, last_response.status
     assert_equal 'text/javascript;charset=utf-8', last_response.content_type
-    err = 'console.error("ExecJS::RuntimeError\n--> SyntaxError: reserved word \"function\"")'
+    err = 'console.error("ExecJS::RuntimeError\n--> SyntaxError: :1:1: reserved word \"function\"")'
     assert_equal err, last_response.body
   end
   

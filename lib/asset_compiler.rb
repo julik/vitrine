@@ -79,7 +79,7 @@ class Vitrine::AssetCompiler < Sinatra::Base
         # whereas otherwise it would have been discarded
         [
           "//# sourceMappingURL=#{basename}.js.map", 
-          CoffeeScript.compile(source_body)
+          Vitrine.compile_coffeescript(source_body)
         ].join("\n")
       end
     rescue Errno::ENOENT # Missing CoffeeScript
