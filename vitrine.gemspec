@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "vitrine"
-  s.version = "0.0.15"
+  s.version = "0.0.16"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Julik Tarkhanov"]
-  s.date = "2014-01-05"
+  s.date = "2014-01-06"
   s.description = " Serves ERB templates with live CoffeeScript and SASS "
   s.email = "me@julik.nl"
   s.executables = ["vitrine"]
