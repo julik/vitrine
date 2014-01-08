@@ -92,8 +92,6 @@ class Vitrine::App < Sinatra::Base
     render(template_engine, File.read(template_path), :layout => get_layout, :locals => locals)
   end
   
-  
-  
   def get_layout
     layouts = Dir.glob(File.join(settings.views, 'layout.*'))
     layouts.any? ? :layout : false
