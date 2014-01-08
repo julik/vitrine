@@ -1,6 +1,8 @@
 A nimble web server one-liner for modern web-apps, a bit in the style of
-[lineman](https://github.com/testdouble/lineman), [serve](https://github.com/visionmedia/serve),
-another [serve](https://github.com/jlong/serve) and such. Will display your precious stuff on port 9292.
+[lineman](https://github.com/testdouble/lineman), [middleman](https://github.com/middleman/middleman), [serve](https://github.com/visionmedia/serve), another [serve](https://github.com/jlong/serve) 
+and such. Will display your precious stuff on port 9292.
+
+It does some of what those other projects - only the stuff I need, with less.
 
 ## Core idea of Vitrine
 
@@ -34,8 +36,8 @@ to be able to just yank the file in there and carry on. THe compilation perks in
 
 ## Asset caching
 
-Succesfully compiled assets will be cached to save time on next reload, and ETagged based on their
-mtime.
+Succesfully compiled assets will be ETagged based on their mtime. You should run an HTTP caching
+proxy on top of a Vitrine app in production.
 
 ## Automatic Ruby template pickup
 
@@ -43,8 +45,10 @@ If you have the "views" directory available, Vitrine will try to pick up any usa
 From there on, it's going to try to render it with the automatically picked template engine using the
 standard Sinatra facilities. You can use HAML, LESS, Slim, ERB, Builder or anything else you like.
 
-If you are writing an SPA, you can make a file called "catch_all.erb" which is going to be 
-the fall-through template for all missing URLs without extension.
+### The "catch-all" template for single-page apps
+ 
+If you are writing an SPA, you can make a template called `catch_all.erb` (or `.haml` or whatever really)
+in your `views` which is going to be the fall-through template for all missing URLs _without_ extension.
 
 ## Automatic reload via Guard
 
@@ -55,14 +59,7 @@ If your project already has a Guardfile, Vitrine will inject live-reloading hook
 
 Vitrine will `etag` all the precompiled assets for faster reloading.
 
-## Packaging and baking
-
-At this point the best way to bake a Vitrine site is to crawl it externally, but we are going to implement
-baking at some point. The idea is that you will end up upgrading the site to either a Node app or a Ruby app
-with it's own `config.ru` - if after that point you still wish to use Vitrine, you can use it like a Rack
-middleware.
-
-## Using as a middleware
+## Using the whole Vitrine as Rack middleware
 
 Most actions in Vitrine will fall through to 404, so `Vitrine::App` can be used as a middleware handler.
 Put Vitrine into your application stack and it will complement your main application very nicely. But don't
@@ -80,6 +77,18 @@ Note that you _need_ to have an `ExecJS` environment on your server for this:
     use Vitrine::AssetCompiler.new do | ac |
       vitrine.settings.set :root => File.dirname(__FILE__)
     end
+
+But you can also choose to have your JSON-serving API backend at the end of the Rack stack, and `Vitrine`
+on top of it for assets and templating - the choice is entirelly up to you.
+
+## Packaging and baking of assets
+
+This is on the TODO list, primarilly because it's notoriously difficult to splice assets for minification
+preserving their source maps.
+
+The idea is that you will end up upgrading the site to either a Node app or a Ruby app
+with it's own `config.ru` - if after that point you still wish to use Vitrine, you can use it like a Rack
+middleware.
 
 ## Contributing to vitrine
  
