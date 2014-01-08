@@ -29,14 +29,14 @@ class Vitrine::AssetCompiler < Sinatra::Base
   # Try to find SCSS replacement for missing CSS
   get /(.+)\.css/ do | basename |
     begin
-      content_type 'text/css', :charset => 'utf-8'
-      # TODO: has no handling for .sass
+      # TODO: handle .sass ext as well
       scss_source_path = File.join(get_public, "#{basename}.scss")
-      mtime_cache(scss_source_path) do
-        # TODO: Examine http://sass-lang.com/documentation/file.SASS_REFERENCE.html
-        # It already has provisions for error display, among other things
-        Sass.compile_file(scss_source_path, cache_location: '/tmp/vitrine/sass-cache')
-      end
+      mtime_cache(scss_source_path)
+      content_type 'text/css', :charset => 'utf-8'
+      
+      # TODO: Examine http://sass-lang.com/documentation/file.SASS_REFERENCE.html
+      # It already has provisions for error display, among other things
+      Sass.compile_file(scss_source_path, cache_location: '/tmp/vitrine/sass-cache')
     rescue Errno::ENOENT # Missing SCSS
       forward_or_halt "No such CSS or SCSS file found"
     rescue Exception => e # CSS syntax error or something alike
@@ -55,10 +55,9 @@ class Vitrine::AssetCompiler < Sinatra::Base
   get /(.+)\.js\.map$/ do | basename |
     begin
       coffee_source = File.join(get_public, "#{basename}.coffee")
+      mtime_cache(coffee_source)
       content_type 'application/json', :charset => 'utf-8'
-      mtime_cache(coffee_source) do
-        Vitrine.build_coffeescript_source_map_body(coffee_source, get_public)
-      end
+      Vitrine.build_coffeescript_source_map_body(coffee_source, get_public)
     rescue Errno::ENOENT # Missing CoffeeScript
       forward_or_halt "No coffeescript file found to generate the map for"
     rescue Exception => e # CS syntax error or something alike
@@ -71,17 +70,16 @@ class Vitrine::AssetCompiler < Sinatra::Base
     # If this file is not found resort back to a coffeescript
     begin
       coffee_source = File.join(get_public, "#{basename}.coffee")
+      mtime_cache coffee_source
       content_type 'text/javascript'
-      mtime_cache(coffee_source) do
-        source_body = File.read(coffee_source)
-        # We could have sent a header, but it's a nice idea to have the
-        # sourcemap header saved if we write out the compiled JS,
-        # whereas otherwise it would have been discarded
-        [
-          "//# sourceMappingURL=#{basename}.js.map", 
-          Vitrine.compile_coffeescript(source_body)
-        ].join("\n")
-      end
+      source_body = File.read(coffee_source)
+      # We could have sent a header, but it's a nice idea to have the
+      # sourcemap header saved if we write out the compiled JS,
+      # whereas otherwise it would have been discarded
+      [
+        "//# sourceMappingURL=#{basename}.js.map", 
+        Vitrine.compile_coffeescript(source_body)
+      ].join("\n")
     rescue Errno::ENOENT # Missing CoffeeScript
       forward_or_halt "No such JS file and could not find a .coffee replacement"
     rescue Exception => e # CS syntax error or something alike
@@ -92,31 +90,17 @@ class Vitrine::AssetCompiler < Sinatra::Base
     end
   end
   
-  def mtime_cache(path, &blk)
+  def mtime_cache(path)
     # Mix in the request URL into the cache key so that we can hash
     # .map sourcemaps and .js compiles based off of the same file path
     # and mtime
     key = [File.expand_path(path), File.mtime(path), request.path_info, get_public]
     cache_sha = Digest::SHA1.hexdigest(Marshal.dump(key))
+    cache_control :public
+    etag cache_sha
     
-    # Store in a temp dir
-    FileUtils.mkdir_p '/tmp/vitrine'
-    p = '/tmp/vitrine/%s' % cache_sha
-    
-    # Only write it out unless a file with the same SHA does not exist
-    unless File.exist?(p)
-      Vitrine.atomic_write(p) do |f|
-        log "---> Recompiling #{path} for #{request.path_info}"
-        f.write(yield)
-      end
-    end
-    
-    # And send out the file that's been written
-    last_modified(File.mtime(p))
-    etag File.mtime(p).to_i.to_s
-    File.read(p)
+    log "---> Vitrine AC: Recompiling #{path} -> #{request.path_info}"
   end
-
   
   # Get path to the public directory, trying (in order:)
   # self.public_dir reader

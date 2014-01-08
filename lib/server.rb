@@ -22,7 +22,7 @@ module Vitrine::Server
     Rack::Builder.new do
       use Rack::ShowStatus
       use Rack::ShowExceptions
-  
+      
       guardfile_path = options[:root] + '/Guardfile'
       if File.exist?(guardfile_path)
         $stderr.puts "Attaching LiveReload via Guardfile at #{guardfile_path.inspect}"
@@ -70,6 +70,7 @@ module Vitrine::Server
     options = DEFAULTS.merge(passed_options)
     check_dirs_present!(options)
     
+    $stderr.puts "Vitrine v.#{Vitrine::VERSION} booting in dev mode"
     app = build_app(options)
     start_server(app, options)
   end
