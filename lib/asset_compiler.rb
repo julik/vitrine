@@ -116,7 +116,7 @@ class Vitrine::AssetCompiler < Sinatra::Base
     choices.compact.shift
   end
   
-  def forward_or_halt msg
+  def forward_or_halt(msg)
     if @app
       log "Forwarding, #{msg} -> pub #{get_public.inspect}"
       forward 
@@ -125,7 +125,7 @@ class Vitrine::AssetCompiler < Sinatra::Base
     end
   end
   
-  def log(mgs)
+  def log(msg)
     env['captivity.logger'].debug(msg) if env['captivity.logger']
   end
 end
