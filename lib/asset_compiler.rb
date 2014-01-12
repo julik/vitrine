@@ -27,7 +27,7 @@ class Vitrine::AssetCompiler < Sinatra::Base
   attr_accessor :public_dir
   
   # Try to find SCSS replacement for missing CSS
-  get /(.+)\.css/ do | basename |
+  get /(.+)\.css$/ do | basename |
     # Return vanilla CSS
     if File.exist?(File.join(get_public, basename + '.css'))
       return send_file(File.join(get_public, basename + '.css'))
@@ -51,6 +51,15 @@ class Vitrine::AssetCompiler < Sinatra::Base
      # If we halt with 500 this will not be shown as CSS
      halt 200, css_message
     end
+  end
+  
+  # Try to find SCSS replacement for missing CSS
+  get /(.+)\.css\.map$/ do | basename |
+    # TODO: handle .sass ext as well
+    scss_source_path = File.join(get_public, "#{basename}.scss")
+    mtime_cache(scss_source_path)
+    content_type 'application/json', :charset => 'utf-8'
+    Vitrine.compile_sass_source_map(scss_source_path, get_public)
   end
   
   # Generate a sourcemap for CoffeeScript files
