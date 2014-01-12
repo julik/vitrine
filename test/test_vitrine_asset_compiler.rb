@@ -69,13 +69,13 @@ class TestVitrineAssetCompiler < Test::Unit::TestCase
   end
   
   def test_compiles_scss_when_requested_as_css
-    write_public 'styles.scss' do | f |
+    write_public '/les-styles-rococo/styles.scss' do | f |
       f.puts '.foo {'
       f.puts '.bar { font-size: 10px; }'
       f.puts '}'
     end
     
-    get '/styles.css'
+    get '/les-styles-rococo/styles.css'
     
     assert last_response.ok?
     assert_not_nil last_response.headers['ETag'], 'Should set ETag for the compiled version'

@@ -28,26 +28,28 @@ class Vitrine::AssetCompiler < Sinatra::Base
   
   # Try to find SCSS replacement for missing CSS
   get /(.+)\.css/ do | basename |
+    # Return vanilla CSS
+    if File.exist?(File.join(get_public, basename + '.css'))
+      return send_file(File.join(get_public, basename + '.css'))
+    end
+    
     begin
       # TODO: handle .sass ext as well
       scss_source_path = File.join(get_public, "#{basename}.scss")
       mtime_cache(scss_source_path)
       content_type 'text/css', :charset => 'utf-8'
-      
-      # TODO: Examine http://sass-lang.com/documentation/file.SASS_REFERENCE.html
-      # It already has provisions for error display, among other things
-      Sass.compile_file(scss_source_path, cache_location: '/tmp/vitrine/sass-cache')
+      Vitrine.compile_sass(scss_source_path, get_public)
     rescue Errno::ENOENT # Missing SCSS
       forward_or_halt "No such CSS or SCSS file found"
     rescue Exception => e # CSS syntax error or something alike
-      # Add a generated DOM element before <body/> to inject
-      # a visible error message
-      error_tpl = 'body:before {
-        background: white; padding: 3px; font-family: monospaced; color: red; 
-        font-size: 14px; content: %s }'
-      css_message = error_tpl % [e.class, "\n", "--> ", e.message].join.inspect
-      # If we halt with 500 this will not be shown as CSS
-      halt 200, css_message
+     # Add a generated DOM element before <body/> to inject
+     # a visible error message
+     error_tpl = 'body:before {
+       background: white; padding: 3px; font-family: monospaced; color: red; 
+       font-size: 14px; content: %s }'
+     css_message = error_tpl % [e.class, "\n", "--> ", e.message].join.inspect
+     # If we halt with 500 this will not be shown as CSS
+     halt 200, css_message
     end
   end
   
