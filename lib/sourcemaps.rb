@@ -84,7 +84,8 @@ module Vitrine
     
     options = {sourceMap: true}
     
-    # coffee requires filename option to work with source maps (see http://coffeescript.org/documentation/docs/coffee-script.html#section-4)
+    # coffee requires filename option to work with source maps
+    # http://coffeescript.org/documentation/docs/coffee-script.html#section-4
     options[:filename] = relative_js_path
     options[:sourceFiles] = [relative_path]
     
