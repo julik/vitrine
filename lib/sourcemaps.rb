@@ -3,49 +3,6 @@ require 'json'
 
 module Vitrine
   
-  # We need to override the Sass importer
-  # so that it gives us URLs relative to the server root for sourcemaps
-  class Imp < Sass::Importers::Filesystem
-    def public_url(of_filesystem_path)
-      scss_uri = '/' + Pathname.new(of_filesystem_path).relative_path_from(Pathname.new(root)).to_s
-    end
-  end
-  
-  # Compile a SASS/SCSS file to CSS
-  def self.compile_sass_and_sourcemap(scss_path, public_folder_path)
-    # Compute the paths relative to the webserver public root
-    scss_uri = '/' + Pathname.new(scss_path).relative_path_from(Pathname.new(public_folder_path)).to_s
-    css_uri = scss_uri.gsub(/\.scss$/, '.css')
-    sourcemap_uri= css_uri + '.map'
-    
-    engine_opts = {importer: Imp.new(public_folder_path), sourcemap: true, cache: false}
-    map_options = {css_path: css_uri, sourcemap_path: sourcemap_uri }
-    
-    engine = Sass::Engine.for_file(scss_path, engine_opts)
-    
-    # Determine the sourcemap URL for the SASS file
-    rendered, mapping = engine.render_with_sourcemap(sourcemap_uri)
-    
-    # Serialize the sourcemap
-    # We need to pass css_uri: so that the generated sourcemap refers to the
-    # file that can be pulled of the server as opposed to a file on the filesystem
-    sourcemap_body = mapping.to_json(map_options)
-    
-    [rendered, sourcemap_body]
-  end
-  
-  # Compile SASS and return the source map only
-  def self.compile_sass_source_map(scss_path, public_folder_path)
-    css, map = compile_sass_and_sourcemap(scss_path, public_folder_path)
-    map
-  end
-  
-  # Compiles SASS and it's sourcemap and returns the CSS only
-  def self.compile_sass(scss_path, public_folder_path)
-    css, map = compile_sass_and_sourcemap(scss_path, public_folder_path)
-    css
-  end
-  
   # Compile a script (String or IO) to JavaScript.
   # This is a version lifted from here
   # https://github.com/josh/ruby-coffee-script/blob/114b65b638f66ba04b60bf9c24b54360260f9898/lib/coffee_script.rb
