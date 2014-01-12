@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = "vitrine"
-  s.version = "0.0.18"
+  s.version = "0.0.19"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Julik Tarkhanov"]
@@ -49,41 +49,44 @@ Gem::Specification.new do |s|
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<sinatra>, ["~> 1.4"])
       s.add_runtime_dependency(%q<coffee-script>, ["~> 2.2"])
-      s.add_runtime_dependency(%q<sass>, ["= 3.3.0.rc.2"])
+      s.add_runtime_dependency(%q<sass>, ["~> 3"])
       s.add_runtime_dependency(%q<rack-contrib>, [">= 0"])
       s.add_runtime_dependency(%q<rack-livereload>, [">= 0"])
+      s.add_development_dependency(%q<guard>, ["~> 2.2"])
+      s.add_development_dependency(%q<guard-livereload>, [">= 0"])
+      s.add_development_dependency(%q<guard-test>, [">= 0"])
       s.add_development_dependency(%q<rdoc>, ["~> 3.12"])
-      s.add_development_dependency(%q<bundler>, ["~> 1.0"])
       s.add_development_dependency(%q<jeweler>, ["~> 1.8.7"])
       s.add_development_dependency(%q<rack-test>, [">= 0"])
-      s.add_development_dependency(%q<guard-test>, [">= 0"])
       s.add_development_dependency(%q<minitest>, [">= 0"])
       s.add_development_dependency(%q<pry>, [">= 0"])
     else
       s.add_dependency(%q<sinatra>, ["~> 1.4"])
       s.add_dependency(%q<coffee-script>, ["~> 2.2"])
-      s.add_dependency(%q<sass>, ["= 3.3.0.rc.2"])
+      s.add_dependency(%q<sass>, ["~> 3"])
       s.add_dependency(%q<rack-contrib>, [">= 0"])
       s.add_dependency(%q<rack-livereload>, [">= 0"])
+      s.add_dependency(%q<guard>, ["~> 2.2"])
+      s.add_dependency(%q<guard-livereload>, [">= 0"])
+      s.add_dependency(%q<guard-test>, [">= 0"])
       s.add_dependency(%q<rdoc>, ["~> 3.12"])
-      s.add_dependency(%q<bundler>, ["~> 1.0"])
       s.add_dependency(%q<jeweler>, ["~> 1.8.7"])
       s.add_dependency(%q<rack-test>, [">= 0"])
-      s.add_dependency(%q<guard-test>, [">= 0"])
       s.add_dependency(%q<minitest>, [">= 0"])
       s.add_dependency(%q<pry>, [">= 0"])
     end
   else
     s.add_dependency(%q<sinatra>, ["~> 1.4"])
     s.add_dependency(%q<coffee-script>, ["~> 2.2"])
-    s.add_dependency(%q<sass>, ["= 3.3.0.rc.2"])
+    s.add_dependency(%q<sass>, ["~> 3"])
     s.add_dependency(%q<rack-contrib>, [">= 0"])
     s.add_dependency(%q<rack-livereload>, [">= 0"])
+    s.add_dependency(%q<guard>, ["~> 2.2"])
+    s.add_dependency(%q<guard-livereload>, [">= 0"])
+    s.add_dependency(%q<guard-test>, [">= 0"])
     s.add_dependency(%q<rdoc>, ["~> 3.12"])
-    s.add_dependency(%q<bundler>, ["~> 1.0"])
     s.add_dependency(%q<jeweler>, ["~> 1.8.7"])
     s.add_dependency(%q<rack-test>, [">= 0"])
-    s.add_dependency(%q<guard-test>, [">= 0"])
     s.add_dependency(%q<minitest>, [">= 0"])
     s.add_dependency(%q<pry>, [">= 0"])
   end
