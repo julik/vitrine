@@ -2,7 +2,7 @@ source "http://rubygems.org"
 
 gem 'sinatra', '~> 1.4', require: 'sinatra/base'
 gem 'coffee-script', '~> 2.2'
-gem 'sass', '~> 3'
+gem 'sass', :git => 'git@github.com:nex3/sass.git', :branch => 'listen-2.0' 
 gem 'rack-contrib'
 gem 'rack-livereload'
 
