@@ -31,13 +31,14 @@ to be able to just yank the file in there and carry on. THe compilation perks in
   Ask for `foo.css` and `foo.scss` will be compiled on the fly.
 * Any `.coffee` file you shove into the `public` directory can be references as `.js` from your HTML.
   Ask for `bar.js` and `bar.coffee` will be compiled on the fly.
-* CoffeeScript files will have source-maps out of the box for pleasant browser debugging.
-* Decent error messages will be shown for both invalid SCSS and invalid CoffeeScript.
+* CoffeeScript and SCSS files will have sourcemaps out of the box for pleasant browser debugging.
+* Decent error messages will be shown for both invalid SCSS and invalid CoffeeScript, including
+proper line reference for syntax errors.
 
 ## Asset caching
 
 Succesfully compiled assets will be ETagged based on their mtime. You should run an HTTP caching
-proxy on top of a Vitrine app in production.
+proxy on top of Vitrine if you use it in production.
 
 ## Automatic Ruby template pickup
 
