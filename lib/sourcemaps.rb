@@ -9,7 +9,7 @@ module Vitrine
     def public_url(of_filesystem_path)
       # Importer defines a basic attribute called "root" which we set when initializing
       # We have to return the server-relative URL of the path from here
-      scss_uri = '/' + Pathname.new(of_filesystem_path).relative_path_from(Pathname.new(root)).to_s
+      '/' + Pathname.new(of_filesystem_path).relative_path_from(Pathname.new(root)).to_s
     end
   end
   
