@@ -38,6 +38,8 @@ module Vitrine
     chunk = Regexp.escape('/*@ sourceMappingURL')
     replacement = '/*# sourceMappingURL'
     re = /^#{chunk}/
+    
+    # And return both
     [rendered.gsub(re,replacement), sourcemap_body]
   end
   
