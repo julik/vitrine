@@ -69,17 +69,29 @@ class TestVitrineAssetCompiler < Test::Unit::TestCase
   end
   
   def test_compiles_scss_when_requested_as_css
-    write_public 'styles.scss' do | f |
+    write_public '/les-styles-rococo/styles.scss' do | f |
       f.puts '.foo {'
       f.puts '.bar { font-size: 10px; }'
       f.puts '}'
     end
     
-    get '/styles.css'
+    get '/les-styles-rococo/styles.css'
     
     assert last_response.ok?
     assert_not_nil last_response.headers['ETag'], 'Should set ETag for the compiled version'
-    assert last_response.body.include?('.foo .bar {'), 'Should have compiled the CSS rule'
+    assert_include last_response.body, '.foo .bar {'
+    assert_include last_response.body, '*# sourceMappingURL=/les-styles-rococo/styles.css.map */'
+    
+    get '/les-styles-rococo/styles.css.map'
+    
+    assert last_response.ok?
+    assert_equal "application/json;charset=utf-8", last_response.content_type
+    resp = {"version"=> "3",
+      "mappings"=> "AACA,SAAK;EAAE,SAAS,EAAE,IAAI",
+      "sources"=> ["/les-styles-rococo/styles.scss"],
+      "file" => "styles.css"
+    }
+    assert_equal resp, JSON.parse(last_response.body)
   end
   
   def test_displays_decent_alerts_for_scss_errors
