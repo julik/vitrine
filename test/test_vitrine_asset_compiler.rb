@@ -86,7 +86,7 @@ class TestVitrineAssetCompiler < Test::Unit::TestCase
     
     assert last_response.ok?
     assert_equal "application/json;charset=utf-8", last_response.content_type
-    resp = {"version"=> 3,
+    resp = {"version"=> "3",
       "mappings"=> "AACA,SAAK;EAAE,SAAS,EAAE,IAAI",
       "sources"=> ["/les-styles-rococo/styles.scss"],
       "file" => "styles.css"

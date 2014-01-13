@@ -31,7 +31,12 @@ module Vitrine
     # file that can be pulled of the server as opposed to a file on the filesystem
     sourcemap_body = mapping.to_json(map_options)
     
-    [rendered, sourcemap_body]
+    # We are using a pre-release version of SASS which still had old sourcemap reference
+    # syntax, so we have to fix it by hand
+    chunk = Regexp.escape('/*@ sourceMappingURL')
+    replacement = '/*# sourceMappingURL'
+    re = /^#{chunk}/
+    [rendered.gsub(re,replacement), sourcemap_body]
   end
   
   # Compile SASS and return the source map only
