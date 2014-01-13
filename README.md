@@ -30,8 +30,13 @@ If most of the above is true, Vitrine is just what you need.
 ## All you need is some `public`
 
 Vitrine assumes that there are two directories under the current tree:
+
 * `public` - for the JS, for CSS and SCSS and in general all the static files served straight out
 * `views` - for the templates, in any Ruby templating format you have
+
+This structure fits my preferred stack (Sinatra + Passenger) perfectly and allows running sane
+defaults. It is also migratable to another stack with minimum effort, while still having things
+like asset passthrough via Passenger work out of the box.
 
 ## Automatic compilation
 
