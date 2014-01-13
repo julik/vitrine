@@ -25,7 +25,7 @@ Vitrine assumes that there are two directories under the current tree:
 
 Vitrine is for **development**. It takes runtime compilation to 11 and beyound. Running tasks
 is all fine and good when you build out the app for production, but when iterating on UI it's essential
-to be able to just yank the file in there and carry on. THe compilation perks include:
+to be able to just yank the file in there and carry on. Compilation perks include:
 
 * Any `.scss` file you shove into the `public` directory can be referenced as `.css` from your HTML.
   Ask for `foo.css` and `foo.scss` will be compiled on the fly.
@@ -34,6 +34,17 @@ to be able to just yank the file in there and carry on. THe compilation perks in
 * CoffeeScript and SCSS files will have sourcemaps out of the box for pleasant browser debugging.
 * Decent error messages will be shown for both invalid SCSS and invalid CoffeeScript, including
 proper line reference for syntax errors.
+
+Vitrine favors **runtime assembly** for JavaScript and CSS. That is: load many files into your page
+in development mode, and build them into one chunk using external tools on deployment only.
+
+This helps accelerating the roundtrip time because if you use asset compilation on every reload
+when designing the UI you can easily get into the compile-concat-minify roundtrip times of more
+than a few seconds. This is too much.
+
+You are totally free to use your own compile-concat-minify pipelines when building for production.
+Unlike Sprockets Vitrine does not force you to inject any specific preprocessor directives into
+your scripts or CSS - this also facilitates debugging a GREAT LOT.
 
 ## Asset caching
 
