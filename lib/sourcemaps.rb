@@ -29,8 +29,8 @@ module Vitrine
     rendered, mapping = engine.render_with_sourcemap(sourcemap_uri)
     
     # Serialize the sourcemap
-    # We need to pass css_uri: so that the generated sourcemap refers to the
-    # file that can be pulled of the server as opposed to a file on the filesystem
+    # We need to pass the map options so that the generated sourcemap refers to the
+    # file that can be pulled off the server as opposed to a file on the filesystem
     sourcemap_body = mapping.to_json(map_options)
     
     # We are using a pre-release version of SASS which still had old sourcemap reference
