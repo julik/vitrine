@@ -2,7 +2,19 @@ A nimble web server one-liner for modern web-apps, a bit in the style of
 [lineman](https://github.com/testdouble/lineman), [middleman](https://github.com/middleman/middleman), [serve](https://github.com/visionmedia/serve), another [serve](https://github.com/jlong/serve) 
 and such. Will display your precious stuff on port 9292.
 
-It does some of what those other projects - only the stuff I need, with less.
+It does some of what those other projects - only the stuff I need, with less. And *with* the stuff that I
+consider essential that still isn't supported where it should be supported. You can see Vitrine as 
+reinventing the wheel for sure, but the reason I wrote it is that I found the other development servers
+giving me death by a thousand paper cuts. Just that really:
+
+For example, `serve` which I loved dearly compiles `.coffee` files to JS with their native extension and
+does not do source maps. It also depends on Compass, so you probably won't be able to put in the newer
+version of SASS required for source maps. Sprockets does not do source maps either. The CoffeeScript
+gem does not propagate the syntax error line to your browser console, so it's notoriously difficult
+to find out where the errors are - because someone refused to accept a PR to the CoffeeScript gem -
+and these small irritating things just go on and on and on. In the meantime, I wanted a comfortable
+dev environment, without resorting to filesystem watching and rebuilding all my assets every time I change
+a character. So there: Vitrine.
 
 ## Core idea of Vitrine
 
@@ -31,9 +43,10 @@ to be able to just yank the file in there and carry on. Compilation perks includ
   Ask for `foo.css` and `foo.scss` will be compiled on the fly.
 * Any `.coffee` file you shove into the `public` directory can be references as `.js` from your HTML.
   Ask for `bar.js` and `bar.coffee` will be compiled on the fly.
-* CoffeeScript and SCSS files will have sourcemaps out of the box for pleasant browser debugging.
+* CoffeeScript and SCSS files will have sourcemaps out of the box for pleasant browser debugging 
+  (something Sprockets still cannot do properly)
 * Decent error messages will be shown for both invalid SCSS and invalid CoffeeScript, including
-proper line reference for syntax errors.
+proper line reference for syntax errors (something Sprockets still cannot do properly)
 
 Vitrine favors **runtime assembly** for JavaScript and CSS. That is: load many files into your page
 in development mode, and build them into one chunk using external tools on deployment only.
