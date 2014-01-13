@@ -5,8 +5,10 @@ module Vitrine
   
   # We need to override the Sass importer
   # so that it gives us URLs relative to the server root for sourcemaps
-  class Imp < Sass::Importers::Filesystem
+  class SassImporter < Sass::Importers::Filesystem
     def public_url(of_filesystem_path)
+      # Importer defines a basic attribute called "root" which we set when initializing
+      # We have to return the server-relative URL of the path from here
       scss_uri = '/' + Pathname.new(of_filesystem_path).relative_path_from(Pathname.new(root)).to_s
     end
   end
@@ -18,7 +20,7 @@ module Vitrine
     css_uri = scss_uri.gsub(/\.scss$/, '.css')
     sourcemap_uri = css_uri + '.map'
     
-    engine_opts = {importer: Imp.new(public_folder_path), sourcemap: true, cache: false}
+    engine_opts = {importer: SassImporter.new(public_folder_path), sourcemap: true, cache: false}
     map_options = {css_path: css_uri, sourcemap_path: sourcemap_uri }
     
     engine = Sass::Engine.for_file(scss_path, engine_opts)
