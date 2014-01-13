@@ -16,7 +16,7 @@ module Vitrine
     # Compute the paths relative to the webserver public root
     scss_uri = '/' + Pathname.new(scss_path).relative_path_from(Pathname.new(public_folder_path)).to_s
     css_uri = scss_uri.gsub(/\.scss$/, '.css')
-    sourcemap_uri= css_uri + '.map'
+    sourcemap_uri = css_uri + '.map'
     
     engine_opts = {importer: Imp.new(public_folder_path), sourcemap: true, cache: false}
     map_options = {css_path: css_uri, sourcemap_path: sourcemap_uri }
