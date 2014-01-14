@@ -88,8 +88,8 @@ class Vitrine::AssetCompiler < Sinatra::Base
       # sourcemap header saved if we write out the compiled JS,
       # whereas otherwise it would have been discarded
       [
+        Vitrine.compile_coffeescript(source_body),
         "//# sourceMappingURL=#{basename}.js.map", 
-        Vitrine.compile_coffeescript(source_body)
       ].join("\n")
     rescue Errno::ENOENT # Missing CoffeeScript
       forward_or_halt "No such JS file and could not find a .coffee replacement"
