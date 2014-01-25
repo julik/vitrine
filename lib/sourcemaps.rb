@@ -26,7 +26,7 @@ module Vitrine
     engine = Sass::Engine.for_file(scss_path, engine_opts)
     
     # Determine the sourcemap URL for the SASS file
-    rendered, mapping = engine.render_with_sourcemap(sourcemap_uri)
+    raw_css, mapping = engine.render_with_sourcemap(sourcemap_uri)
     
     # Serialize the sourcemap
     # We need to pass the map options so that the generated sourcemap refers to the
@@ -35,12 +35,14 @@ module Vitrine
     
     # We are using a pre-release version of SASS which still had old sourcemap reference
     # syntax, so we have to fix it by hand
+    # TODO: remove once there is a gem for https://github.com/nex3/sass/pull/982
     chunk = Regexp.escape('/*@ sourceMappingURL')
     replacement = '/*# sourceMappingURL'
     re = /^#{chunk}/
+    raw_css = raw_css.gsub(re,replacement)
     
     # And return both
-    [rendered.gsub(re,replacement), sourcemap_body]
+    [raw_css, sourcemap_body]
   end
   
   # Compile SASS and return the source map only
