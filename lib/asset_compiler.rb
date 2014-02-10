@@ -94,6 +94,12 @@ class Vitrine::AssetCompiler < Sinatra::Base
     rescue Errno::ENOENT # Missing CoffeeScript
       forward_or_halt "No such JS file and could not find a .coffee replacement"
     rescue Exception => e # CS syntax error or something alike
+      
+      # Ensure the response with the exception gets reloaded on next request
+      response.headers['Cache-Control'] = 'private'
+      response.headers['Pragma'] = 'no-cache'
+      response.headers.delete('ETag')
+      
       # Inject the syntax error into the browser console
       console_message = 'console.error(%s)' % [e.class, "\n", "--> ", e.message].join.inspect
       # Avoid 500 because it plays bad with LiveReload

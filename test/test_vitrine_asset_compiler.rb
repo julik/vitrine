@@ -51,7 +51,12 @@ class TestVitrineAssetCompiler < Test::Unit::TestCase
     get '/faulty.js'
     
     assert_equal 200, last_response.status
-    assert_equal 'text/javascript;charset=utf-8', last_response.content_type
+    assert_equal 'text/javascript;charset=utf-8', last_response.content_type, "Should set JS content type"
+    
+    assert_equal 'private', last_response.headers['Cache-Control'], "Should be cache busting"
+    assert_equal 'no-cache', last_response.headers['Pragma'], "Should be cache busting with Pragma: no-cache"
+    assert_nil last_response.headers['ETag'], 'Should send no etag across'
+    
     err = 'console.error("ExecJS::RuntimeError\n--> SyntaxError: :1:1: reserved word \"function\"")'
     assert_equal err, last_response.body
   end
