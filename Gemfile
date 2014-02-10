@@ -21,7 +21,7 @@ https://github.com/nex3/sass/pull/982
 Better still, SASS authors should remove filesystem watching or implement
 it in a portable/vendored manner.
 =end
-gem 'sass', git: 'https://github.com/nex3/sass.git', branch: 'master'
+gem 'sass', '3.3.0.rc.3'
 gem 'rack-contrib'
 gem 'rack-livereload'
 

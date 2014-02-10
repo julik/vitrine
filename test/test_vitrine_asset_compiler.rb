@@ -50,12 +50,12 @@ class TestVitrineAssetCompiler < Test::Unit::TestCase
     
     get '/faulty.js'
     
-    assert_equal 200, last_response.status
-    assert_equal 'text/javascript;charset=utf-8', last_response.content_type, "Should set JS content type"
-    
     assert_equal 'private', last_response.headers['Cache-Control'], "Should be cache busting"
     assert_equal 'no-cache', last_response.headers['Pragma'], "Should be cache busting with Pragma: no-cache"
     assert_nil last_response.headers['ETag'], 'Should send no etag across'
+    
+    assert_equal 200, last_response.status
+    assert_equal 'text/javascript;charset=utf-8', last_response.content_type, "Should set JS content type"
     
     err = 'console.error("ExecJS::RuntimeError\n--> SyntaxError: :1:1: reserved word \"function\"")'
     assert_equal err, last_response.body
@@ -110,6 +110,11 @@ class TestVitrineAssetCompiler < Test::Unit::TestCase
     get '/faulty.css'
     
     assert_equal 200, last_response.status
+    
+    assert_equal 'private', last_response.headers['Cache-Control'], "Should be cache busting"
+    assert_equal 'no-cache', last_response.headers['Pragma'], "Should be cache busting with Pragma: no-cache"
+    assert_nil last_response.headers['ETag'], 'Should send no etag across'
+    
     assert last_response.body.include?('body:before {'), 'Should include the generated element selector'
     assert last_response.body.include?('Sass::SyntaxError'), 'Should include the syntax error class'
   end

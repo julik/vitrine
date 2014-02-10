@@ -42,14 +42,15 @@ class Vitrine::AssetCompiler < Sinatra::Base
     rescue Errno::ENOENT # Missing SCSS
       forward_or_halt "No such CSS or SCSS file found"
     rescue Exception => e # CSS syntax error or something alike
-     # Add a generated DOM element before <body/> to inject
-     # a visible error message
-     error_tpl = 'body:before {
-       background: white; padding: 3px; font-family: monospaced; color: red; 
-       font-size: 14px; content: %s }'
-     css_message = error_tpl % [e.class, "\n", "--> ", e.message].join.inspect
-     # If we halt with 500 this will not be shown as CSS
-     halt 200, css_message
+      cache_bust!
+      # Add a generated DOM element before <body/> to inject
+      # a visible error message
+      error_tpl = 'body:before {
+        background: white; padding: 3px; font-family: monospaced; color: red; 
+        font-size: 14px; content: %s }'
+      css_message = error_tpl % [e.class, "\n", "--> ", e.message].join.inspect
+      # If we halt with 500 this will not be shown as CSS
+      halt 200, css_message
     end
   end
   
