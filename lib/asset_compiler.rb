@@ -96,15 +96,19 @@ class Vitrine::AssetCompiler < Sinatra::Base
     rescue Exception => e # CS syntax error or something alike
       
       # Ensure the response with the exception gets reloaded on next request
-      response.headers['Cache-Control'] = 'private'
-      response.headers['Pragma'] = 'no-cache'
-      response.headers.delete('ETag')
+      cache_bust!
       
       # Inject the syntax error into the browser console
       console_message = 'console.error(%s)' % [e.class, "\n", "--> ", e.message].join.inspect
       # Avoid 500 because it plays bad with LiveReload
       halt 200, console_message
     end
+  end
+  
+  def cache_bust!
+    response.headers['Cache-Control'] = 'private'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers.delete('ETag')
   end
   
   def mtime_cache(path)
