@@ -82,7 +82,7 @@ class Vitrine::AssetCompiler < Sinatra::Base
     # If this file is not found resort back to a coffeescript
     begin
       coffee_source = File.join(get_public, "#{basename}.coffee")
-      mtime_cache coffee_source
+      mtime_cache coffee_source # Avoid CS recompilation if it isn't needed
       content_type 'text/javascript'
       source_body = File.read(coffee_source)
       # We could have sent a header, but it's a nice idea to have the
