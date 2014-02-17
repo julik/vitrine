@@ -18,11 +18,10 @@ class TestVitrineAssetCompiler < Test::Unit::TestCase
     assert_equal 200, last_response.status
     assert_equal 'text/javascript;charset=utf-8', last_response.content_type
     
-    assert_include last_response.body, 'alert("rockage!")', 'Should include the compiled function'
-    assert_include last_response.body, '//# sourceMappingURL=/nice.js.map', 'Should include the reference to the source map'
+    assert_equal '/nice.js.map', last_response.headers['X-SourceMap'] 
+    assert_equal '/nice.js.map', last_response.headers['SourceMap'] 
     
-    last_line = last_response.body.split("\n").pop
-    assert_include last_line, 'sourceMappingURL'
+    assert_include last_response.body, 'alert("rockage!")', 'Should include the compiled function'
   end
   
   def test_compiles_coffeescript_sourcemap

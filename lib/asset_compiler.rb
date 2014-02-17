@@ -85,13 +85,11 @@ class Vitrine::AssetCompiler < Sinatra::Base
       mtime_cache coffee_source # Avoid CS recompilation if it isn't needed
       content_type 'text/javascript'
       source_body = File.read(coffee_source)
-      # We could have sent a header, but it's a nice idea to have the
-      # sourcemap header saved if we write out the compiled JS,
-      # whereas otherwise it would have been discarded
-      [
-        Vitrine.compile_coffeescript(source_body),
-        "//# sourceMappingURL=#{basename}.js.map", 
-      ].join("\n")
+      
+      built = Vitrine.compile_coffeescript(source_body),
+      response.headers['X-SourceMap'] = "#{basename}.js.map"
+      response.headers['SourceMap'] = "#{basename}.js.map"
+      built
     rescue Errno::ENOENT # Missing CoffeeScript
       forward_or_halt "No such JS file and could not find a .coffee replacement"
     rescue Exception => e # CS syntax error or something alike
