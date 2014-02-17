@@ -39,7 +39,7 @@ class TestVitrineAssetCompiler < Test::Unit::TestCase
     
     get '/js/nice.js.map'
     ref = {"version"=>3, "file"=>"", "sourceRoot"=>"", "sources"=>["/js/nice.coffee"], 
-      "names"=>[], "mappings"=>"AAAA;CAAA,CAAA,GAAA,KAAA;CAAA"}
+      "names"=>[], "mappings"=>"AAAA;AAAA,EAAA,KAAA,CAAM,UAAN,CAAA,CAAA;AAAA"}
     assert_equal ref, JSON.parse(last_response.body)
   end
   
