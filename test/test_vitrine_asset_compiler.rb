@@ -21,6 +21,8 @@ class TestVitrineAssetCompiler < Test::Unit::TestCase
     assert_equal '/nice.js.map', last_response.headers['X-SourceMap'] 
     assert_equal '/nice.js.map', last_response.headers['SourceMap'] 
     
+    assert_equal "(function() {\n  alert(\"rockage!\");\n\n}).call(this);\n", last_response.body
+    
     assert_include last_response.body, 'alert("rockage!")', 'Should include the compiled function'
   end
   

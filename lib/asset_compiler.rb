@@ -86,7 +86,7 @@ class Vitrine::AssetCompiler < Sinatra::Base
       content_type 'text/javascript'
       source_body = File.read(coffee_source)
       
-      built = Vitrine.compile_coffeescript(source_body),
+      built = Vitrine.compile_coffeescript(source_body)
       response.headers['X-SourceMap'] = "#{basename}.js.map"
       response.headers['SourceMap'] = "#{basename}.js.map"
       built
