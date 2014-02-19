@@ -14,9 +14,10 @@ class TestVitrineAssetCompiler < Test::Unit::TestCase
     
     get '/nice.js'
     
-    assert_not_nil last_response.headers['ETag'], 'Should set ETag for the compiled version'
     assert_equal 200, last_response.status
     assert_equal 'text/javascript;charset=utf-8', last_response.content_type
+    assert_not_nil last_response.headers['ETag'], 'Should set ETag for the compiled version'
+    assert_equal 'public, must-revalidate', last_response['Cache-Control'], 'Should set cache-control'
     
     assert_include last_response.body, 'alert("rockage!")', 'Should include the compiled function'
     assert_include last_response.body, '//# sourceMappingURL=/nice.js.map', 'Should include the reference to the source map'
@@ -68,7 +69,8 @@ class TestVitrineAssetCompiler < Test::Unit::TestCase
     
     get '/nice.js'
     assert_equal 200, last_response.status
-    assert_not_nil last_response.headers['ETag']
+    assert_not_nil last_response['ETag']
+    assert_equal 'public, must-revalidate', last_response['Cache-Control']
     
     etag = last_response.headers['ETag']
     get '/nice.js', {}, rack_env = {'HTTP_IF_NONE_MATCH' => etag}
@@ -86,6 +88,8 @@ class TestVitrineAssetCompiler < Test::Unit::TestCase
     
     assert last_response.ok?
     assert_not_nil last_response.headers['ETag'], 'Should set ETag for the compiled version'
+    assert_equal 'public, must-revalidate', last_response['Cache-Control'], 'Should set cache-control'
+    
     assert_include last_response.body, '.foo .bar {'
     assert_include last_response.body, '*# sourceMappingURL=/les-styles-rococo/styles.css.map */'
     

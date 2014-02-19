@@ -118,8 +118,9 @@ class Vitrine::AssetCompiler < Sinatra::Base
     # and mtime
     key = [File.expand_path(path), File.mtime(path), request.path_info, get_public]
     cache_sha = Digest::SHA1.hexdigest(Marshal.dump(key))
-    cache_control :public
+    
     etag cache_sha
+    cache_control :public, :must_revalidate
     
     log "---> Vitrine AC: Recompiling #{path} -> #{request.path_info}"
   end
