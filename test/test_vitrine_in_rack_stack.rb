@@ -26,6 +26,17 @@ class TestVitrineInRackStack < Test::Unit::TestCase
     assert_match /Lobstericious/, last_response.body, "Should have forwarded to downstream Lobster"
   end
   
+  def test_fetch_static_file_sets_cache_control
+    write_public('hello.coffee') do | f |
+      f << 'window.alert "Hello Coffee"'
+    end
+    
+    get '/hello.coffee'
+    assert last_response.ok?
+    assert last_response['Last-Modified'], 'Last-Modified should be set'
+    assert_equal 'public, must-revalidate, max-age=3600', last_response['Cache-Control']
+  end
+  
   def test_fetch_js
     write_public('hello.coffee') do | f |
       f << 'window.alert "Hello Coffee"'

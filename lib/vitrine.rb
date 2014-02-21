@@ -23,6 +23,7 @@ class Vitrine::App < Sinatra::Base
   # Sets whether Vitrine will output messages about dynamic assets
   set :silent, true
   set :public_folder, ->{ File.join(settings.root, 'public') } 
+  set :static_cache_control, [:public, :must_revalidate, :max_age => 60 * 60]
   
   use Vitrine::AssetCompiler
   
