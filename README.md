@@ -103,9 +103,9 @@ You can also only opt-in to the asset compilation system of Vitrine only once yo
 the prototype stage into, say, a Sinatra application.
 
 Note that you _need_ to have an `ExecJS` environment on your server for this:
-
-    use Vitrine::AssetCompiler.new do | ac |
-      vitrine.settings.set :root => File.dirname(__FILE__)
+    
+    use Vitrine::AssetCompiler do | ac |
+      ac.settings.set :root => File.dirname(__FILE__)
     end
 
 But you can also choose to have your JSON-serving API backend at the end of the Rack stack, and `Vitrine`
