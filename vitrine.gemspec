@@ -49,7 +49,7 @@ Gem::Specification.new do |s|
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<sinatra>, ["~> 1.4"])
       s.add_runtime_dependency(%q<coffee-script>, ["~> 2.2"])
-      s.add_runtime_dependency(%q<sass>, ["= 3.3.0.rc.3"])
+      s.add_runtime_dependency(%q<sass>, ["~> 3.3.0"])
       s.add_runtime_dependency(%q<rack-contrib>, [">= 0"])
       s.add_runtime_dependency(%q<rack-livereload>, [">= 0"])
       s.add_development_dependency(%q<guard>, ["~> 2.2"])
@@ -63,7 +63,7 @@ Gem::Specification.new do |s|
     else
       s.add_dependency(%q<sinatra>, ["~> 1.4"])
       s.add_dependency(%q<coffee-script>, ["~> 2.2"])
-      s.add_dependency(%q<sass>, ["= 3.3.0.rc.3"])
+      s.add_dependency(%q<sass>, ["~> 3.3.0"])
       s.add_dependency(%q<rack-contrib>, [">= 0"])
       s.add_dependency(%q<rack-livereload>, [">= 0"])
       s.add_dependency(%q<guard>, ["~> 2.2"])
@@ -78,7 +78,7 @@ Gem::Specification.new do |s|
   else
     s.add_dependency(%q<sinatra>, ["~> 1.4"])
     s.add_dependency(%q<coffee-script>, ["~> 2.2"])
-    s.add_dependency(%q<sass>, ["= 3.3.0.rc.3"])
+    s.add_dependency(%q<sass>, ["~> 3.3.0"])
     s.add_dependency(%q<rack-contrib>, [">= 0"])
     s.add_dependency(%q<rack-livereload>, [">= 0"])
     s.add_dependency(%q<guard>, ["~> 2.2"])
