@@ -96,8 +96,10 @@ Put Vitrine into your application stack and it will complement your main applica
 forget to set `:root` - like so:
 
     use Vitrine::App.new do | vitrine |
-      vitrine.settings.set :root => File.dirname(__FILE__)
+      vitrine.settings.set :root => File.expand_path(File.dirname(__FILE__))
     end
+
+Note the `expand_path` call - the path absolutely **has to be absolute**
 
 You can also only opt-in to the asset compilation system of Vitrine only once you have migrated your app from
 the prototype stage into, say, a Sinatra application.
