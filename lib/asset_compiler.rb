@@ -43,6 +43,7 @@ class Vitrine::AssetCompiler < Sinatra::Base
       forward_or_halt "No such CSS or SCSS file found"
     rescue Exception => e # CSS syntax error or something alike
       cache_bust!
+      print_compilation_error(e)
       # Add a generated DOM element before <body/> to inject
       # a visible error message
       error_tpl = 'body:before {
@@ -99,6 +100,8 @@ class Vitrine::AssetCompiler < Sinatra::Base
       # Ensure the response with the exception gets reloaded on next request
       cache_bust!
       
+      print_compilation_error(e)
+      
       # Inject the syntax error into the browser console
       console_message = 'console.error(%s)' % [e.class, "\n", "--> ", e.message].join.inspect
       # Avoid 500 because it plays bad with LiveReload
@@ -151,5 +154,14 @@ class Vitrine::AssetCompiler < Sinatra::Base
   def log(msg)
     env['captivity.logger'].debug(msg) if env['captivity.logger']
   end
+  
+  def print_compilation_error(e)
+    # Print the error to $stderr for good measure
+    $stderr.puts "Error when building asset #{request.url.inspect}: #{e.class}: #{e.message}"
+    e.backtrace.each do | line |
+      $stderr.puts "\t#{line}"
+    end
+  end
+  
 end
 
