@@ -13,8 +13,10 @@ module Vitrine
     end
   end
   
-  # Compile a SASS/SCSS file to CSS
+  # Compile a SASS/SCSS file to CSS.
+  # It is essential that the incoming scss_path is absolute from the server root
   def self.compile_sass_and_sourcemap(scss_path, public_folder_path)
+    
     # Compute the paths relative to the webserver public root
     scss_uri = '/' + Pathname.new(scss_path).relative_path_from(Pathname.new(public_folder_path)).to_s
     css_uri = scss_uri.gsub(/\.scss$/, '.css')
