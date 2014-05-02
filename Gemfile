@@ -3,7 +3,7 @@ source "http://rubygems.org"
 gem 'sinatra', '~> 1.4', require: 'sinatra/base'
 gem 'coffee-script', '~> 2.2'
 
-gem 'sass', '~> 3.3.0'
+gem 'sass', '~> 3.3.6'
 gem 'rack-contrib'
 gem 'rack-livereload'
 
